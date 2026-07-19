@@ -1,2 +1,16 @@
+# Dependency directories
+node_modules/
+
+# Local environment variables
+.env
+.env.local
+
+# Temp/logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# User-specific assets
 Plan.md
 preview.html
+Deployment.md
