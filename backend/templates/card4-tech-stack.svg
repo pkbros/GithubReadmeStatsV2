@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 210" width="760" height="210">
+  <!--
+    CARD 4 — TECH STACK | Neon Theme (green #39ff14)
+    Simple, fixed 5-row layout — same structure as CARD 3 (Quest Log).
+    Tokens: {{lang_1_name}}..{{lang_5_name}}, {{lang_1_pct}}..{{lang_5_pct}}, {{lang_1_color}}..{{lang_5_color}}
+    Bar dashoffset per row = 440 - (pct/100 x 440), pass as {{lang_N_dashoffset}}
+  -->
+  <style>
+    .marquee { font-family: 'Courier New', Courier, monospace; font-weight: bold; letter-spacing: 4px; text-transform: uppercase; }
+    .body    { font-family: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .row { opacity: 0; animation: fadeSlideIn 1.5s ease-out infinite; }
+    .r1 { animation-delay: 0.05s; } .r2 { animation-delay: 0.15s; }
+    .r3 { animation-delay: 0.25s; } .r4 { animation-delay: 0.35s; }
+    .r5 { animation-delay: 0.45s; }
+  </style>
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b2"/>
+      <feMerge>
+        <feMergeNode in="b2"/>
+        <feMergeNode in="b1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="barGlow" x="-5%" y="-100%" width="110%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <pattern id="scan" patternUnits="userSpaceOnUse" width="760" height="4">
+      <rect width="760" height="1" fill="white"/>
+    </pattern>
+    <clipPath id="mClip">
+      <rect x="6" y="3" width="748" height="20"/>
+    </clipPath>
+  </defs>
+
+  <!-- ═══ FRAME ═══ -->
+  <rect x="1" y="1" width="758" height="208" rx="6" ry="6" fill="#0a0a0f"/>
+  <rect x="1" y="1" width="758" height="208" rx="6" ry="6" fill="none" stroke="#39ff14" stroke-width="1.5" filter="url(#glow)" opacity="0.5"/>
+  <rect x="1" y="1" width="758" height="208" rx="6" ry="6" fill="none" stroke="#39ff14" stroke-width="1.5"/>
+  <rect x="5" y="5" width="750" height="200" rx="4" ry="4" fill="none" stroke="#39ff14" stroke-width="0.5" opacity="0.2"/>
+
+  <!-- ═══ MARQUEE ═══ -->
+  <rect x="2" y="2" width="756" height="22" rx="5" fill="#39ff14" opacity="0.06"/>
+  <line x1="6" y1="25" x2="754" y2="25" stroke="#39ff14" stroke-width="0.5" opacity="0.25"/>
+  <g clip-path="url(#mClip)">
+    <g>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="-760 0" dur="12s" repeatCount="indefinite"/>
+      <text x="0" y="18" class="marquee" fill="#39ff14" font-size="12" opacity="0.8">★ T ECH STACK ★ TECH STACK ★ TECH STACK ★ TECH STACK ★ TECH STACK</text>
+      <text x="760" y="18" class="marquee" fill="#39ff14" font-size="12" opacity="0.8">★ TECH STACK ★ TECH STACK ★ TECH STACK ★ TECH STACK ★ TECH STACK ★ TECH STACK</text>
+    </g>
+  </g>
+
+  <!-- ═══ ROW 1 ═══ -->
+  <g class="row r1">
+    <text x="30" y="53" class="body" fill="#e0e0e0" font-size="18">{{lang_1_name}}</text>
+    <line x1="220" y1="49" x2="600" y2="49" stroke="#1a1a2e" stroke-width="4" stroke-linecap="round"/>
+    <line x1="220" y1="49" x2="600" y2="49" stroke="{{lang_1_color}}" stroke-width="3" stroke-linecap="round" stroke-dasharray="380" stroke-dashoffset="{{lang_1_dashoffset}}" filter="url(#barGlow)"/>
+    <text x="720" y="53" class="body" fill="#e0e0e0" font-size="18" font-weight="bold" text-anchor="end">{{lang_1_pct}}%</text>
+  </g>
+
+  <!-- ═══ ROW 2 ═══ -->
+  <g class="row r2">
+    <text x="30" y="77" class="body" fill="#e0e0e0" font-size="18">{{lang_2_name}}</text>
+    <line x1="220" y1="73" x2="600" y2="73" stroke="#1a1a2e" stroke-width="4" stroke-linecap="round"/>
+    <line x1="220" y1="73" x2="600" y2="73" stroke="{{lang_2_color}}" stroke-width="3" stroke-linecap="round" stroke-dasharray="380" stroke-dashoffset="{{lang_2_dashoffset}}" filter="url(#barGlow)"/>
+    <text x="720" y="77" class="body" fill="#e0e0e0" font-size="18" font-weight="bold" text-anchor="end">{{lang_2_pct}}%</text>
+  </g>
+
+  <!-- ═══ ROW 3 ═══ -->
+  <g class="row r3">
+    <text x="30" y="101" class="body" fill="#e0e0e0" font-size="18">{{lang_3_name}}</text>
+    <line x1="220" y1="97" x2="600" y2="97" stroke="#1a1a2e" stroke-width="4" stroke-linecap="round"/>
+    <line x1="220" y1="97" x2="600" y2="97" stroke="{{lang_3_color}}" stroke-width="3" stroke-linecap="round" stroke-dasharray="380" stroke-dashoffset="{{lang_3_dashoffset}}" filter="url(#barGlow)"/>
+    <text x="720" y="101" class="body" fill="#e0e0e0" font-size="18" font-weight="bold" text-anchor="end">{{lang_3_pct}}%</text>
+  </g>
+
+  <!-- ═══ ROW 4 ═══ -->
+  <g class="row r4">
+    <text x="30" y="125" class="body" fill="#e0e0e0" font-size="18">{{lang_4_name}}</text>
+    <line x1="220" y1="121" x2="600" y2="121" stroke="#1a1a2e" stroke-width="4" stroke-linecap="round"/>
+    <line x1="220" y1="121" x2="600" y2="121" stroke="{{lang_4_color}}" stroke-width="3" stroke-linecap="round" stroke-dasharray="380" stroke-dashoffset="{{lang_4_dashoffset}}" filter="url(#barGlow)"/>
+    <text x="720" y="125" class="body" fill="#e0e0e0" font-size="18" font-weight="bold" text-anchor="end">{{lang_4_pct}}%</text>
+  </g>
+
+  <!-- ═══ ROW 5 ═══ -->
+  <g class="row r5">
+    <text x="30" y="149" class="body" fill="#e0e0e0" font-size="18">{{lang_5_name}}</text>
+    <line x1="220" y1="145" x2="600" y2="145" stroke="#1a1a2e" stroke-width="4" stroke-linecap="round"/>
+    <line x1="220" y1="145" x2="600" y2="145" stroke="{{lang_5_color}}" stroke-width="3" stroke-linecap="round" stroke-dasharray="380" stroke-dashoffset="{{lang_5_dashoffset}}" filter="url(#barGlow)"/>
+    <text x="720" y="149" class="body" fill="#e0e0e0" font-size="18" font-weight="bold" text-anchor="end">{{lang_5_pct}}%</text>
+  </g>
+
+  <!-- ═══ SCANLINES ═══ -->
+  <rect x="2" y="2" width="756" height="206" rx="5" fill="url(#scan)" opacity="0.035"/>
+</svg>

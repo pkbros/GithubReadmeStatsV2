@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 200" width="760" height="200">
+  <!--
+    CARD 1 — IDENTITY | Neon Theme (cyan #00e5ff)
+    Same tokens as RPG theme: {{name}}, {{username}}, {{bio}}, {{location}}, {{company}}, {{created_at}}
+  -->
+  <style>
+    .marquee { font-family: 'Courier New', Courier, monospace; font-weight: bold; letter-spacing: 4px; text-transform: uppercase; }
+    .display { font-family: 'Courier New', Courier, monospace; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; }
+    .body    { font-family: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; }
+  </style>
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b2"/>
+      <feMerge>
+        <feMergeNode in="b2"/>
+        <feMergeNode in="b1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <pattern id="scan" patternUnits="userSpaceOnUse" width="760" height="4">
+      <rect width="760" height="1" fill="white"/>
+    </pattern>
+    <clipPath id="mClip">
+      <rect x="6" y="3" width="748" height="20"/>
+    </clipPath>
+  </defs>
+
+  <!-- ═══ FRAME ═══ -->
+  <rect x="1" y="1" width="758" height="198" rx="6" ry="6" fill="#0a0a0f"/>
+  <rect x="1" y="1" width="758" height="198" rx="6" ry="6" fill="none" stroke="#00e5ff" stroke-width="1.5" filter="url(#glow)" opacity="0.5"/>
+  <rect x="1" y="1" width="758" height="198" rx="6" ry="6" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+  <rect x="5" y="5" width="750" height="190" rx="4" ry="4" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.2"/>
+
+  <!-- ═══ MARQUEE STRIP ═══ -->
+  <rect x="2" y="2" width="756" height="22" rx="5" fill="#00e5ff" opacity="0.06"/>
+  <line x1="6" y1="25" x2="754" y2="25" stroke="#00e5ff" stroke-width="0.5" opacity="0.25"/>
+  <g clip-path="url(#mClip)">
+    <g>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="-760 0" dur="12s" repeatCount="indefinite"/>
+      <text x="0" y="18" class="marquee" fill="#00e5ff" font-size="12" opacity="0.8">★ IDENTITY ★ IDENTITY ★ IDENTITY ★ IDENTITY ★ IDENTITY ★ IDENTITY</text>
+      <text x="760" y="18" class="marquee" fill="#00e5ff" font-size="12" opacity="0.8">★ IDENTITY ★ IDENTITY ★ IDENTITY ★ IDENTITY ★ IDENTITY ★ IDENTITY ★ IDENTITY ★ IDENTITY ★ IDENTITY </text>
+    </g>
+  </g>
+
+  <!-- ═══ AVATAR ═══ -->
+  <rect x="22" y="32" width="144" height="144" rx="4" ry="4" fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
+  <rect x="24" y="34" width="140" height="140" rx="3" ry="3" fill="#0f0f1a"/>
+  {{avatar}}
+  <!-- <image x="24" y="34" width="140" height="140" > -->
+  <!-- ═══ CONTENT ═══ -->
+  <text x="186" y="54" class="display" fill="#00e5ff" font-size="20">{{name}}</text>
+  <text x="186" y="72" class="body" fill="#555" font-size="13">@{{username}}</text>
+  <text x="186" y="98" class="body" fill="#e0e0e0" font-size="12">{{bio}}</text>
+
+  <text x="186" y="128" class="body" fill="#00e5ff" font-size="13" opacity="0.7">LOCATION</text>
+  <text x="280" y="128" class="body" fill="#e0e0e0" font-size="13">{{location}}</text>
+  <text x="186" y="148" class="body" fill="#00e5ff" font-size="13" opacity="0.7">COMPANY</text>
+  <text x="280" y="148" class="body" fill="#e0e0e0" font-size="13">{{company}}</text>
+  <text x="186" y="168" class="body" fill="#00e5ff" font-size="13" opacity="0.7">JOINED</text>
+  <text x="280" y="168" class="body" fill="#e0e0e0" font-size="13">{{created_at}}</text>
+
+  <!-- ═══ SCANLINES ═══ -->
+  <rect x="2" y="2" width="756" height="196" rx="5" fill="url(#scan)" opacity="0.035"/>
+</svg>

@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 190" width="760" height="190">
+  <!--
+    CARD 2 — STATS | Neon Theme (magenta #ff2d95)
+    Tokens: {{repos}}, {{stars}}, {{forks}}, {{followers}}, {{following}}
+  -->
+  <style>
+    .marquee { font-family: 'Courier New', Courier, monospace; font-weight: bold; letter-spacing: 4px; text-transform: uppercase; }
+    .body    { font-family: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .row { opacity: 0; animation: fadeSlideIn 1.5s ease-out infinite; }
+    .r1 { animation-delay: 0.1s; } .r2 { animation-delay: 0.2s; }
+    .r3 { animation-delay: 0.3s; } .r4 { animation-delay: 0.4s; }
+    .r5 { animation-delay: 0.5s; }
+  </style>
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b2"/>
+      <feMerge><feMergeNode in="b2"/><feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="scan" patternUnits="userSpaceOnUse" width="760" height="4">
+      <rect width="760" height="1" fill="white"/>
+    </pattern>
+    <clipPath id="mClip"><rect x="6" y="3" width="748" height="20"/></clipPath>
+  </defs>
+
+  <!-- ═══ FRAME ═══ -->
+  <rect x="1" y="1" width="758" height="188" rx="6" ry="6" fill="#0a0a0f"/>
+  <rect x="1" y="1" width="758" height="188" rx="6" ry="6" fill="none" stroke="#ff2d95" stroke-width="1.5" filter="url(#glow)" opacity="0.5"/>
+  <rect x="1" y="1" width="758" height="188" rx="6" ry="6" fill="none" stroke="#ff2d95" stroke-width="1.5"/>
+  <rect x="5" y="5" width="750" height="180" rx="4" ry="4" fill="none" stroke="#ff2d95" stroke-width="0.5" opacity="0.2"/>
+
+  <!-- ═══ MARQUEE ═══ -->
+  <rect x="2" y="2" width="756" height="22" rx="5" fill="#ff2d95" opacity="0.06"/>
+  <line x1="6" y1="25" x2="754" y2="25" stroke="#ff2d95" stroke-width="0.5" opacity="0.25"/>
+  <g clip-path="url(#mClip)">
+    <g><animateTransform attributeName="transform" type="translate" from="0 0" to="-760 0" dur="12s" repeatCount="indefinite"/>
+      <text x="0" y="18" class="marquee" fill="#ff2d95" font-size="12.5" opacity="0.8">★ STATS ★ STATS ★ STATS ★ STATS ★ STATS ★ STATS ★ STATS ★ STATS</text>
+      <text x="760" y="18" class="marquee" fill="#ff2d95" font-size="12.5" opacity="0.8">★ STATS ★ STATS ★ STATS ★ STATS ★ STATS ★ STATS ★ STATS ★ STATS ★ STATS ★ STATS ★ STATS ★ STATS </text>
+    </g>
+  </g>
+
+  <!-- ═══ ROW 1: Repositories ═══ -->
+  <g class="row r1">
+    <g transform="translate(30,43)" stroke="#ff2d95" stroke-width="1.5" fill="none" stroke-linejoin="round">
+      <path d="M0,3 L0,14 L15,14 L15,5 L9,5 L7,3 Z"/>
+    </g>
+    <text x="56" y="56" class="body" fill="#e0e0e0" font-size="18">Repositories</text>
+    <text x="720" y="56" class="body" fill="#e0e0e0" font-size="18" font-weight="bold" text-anchor="end">{{repos}}</text>
+  </g>
+
+  <!-- ═══ ROW 2: Total Stars ═══ -->
+  <g class="row r2">
+    <g transform="translate(30,67)" stroke="#ff2d95" stroke-width="1.5" fill="none" stroke-linejoin="round">
+      <polygon points="7.5,0 9.5,5 15,5.5 11,8.5 12,14 7.5,11 3,14 4,8.5 0,5.5 5.5,5"/>
+    </g>
+    <text x="56" y="80" class="body" fill="#e0e0e0" font-size="18">Total Stars</text>
+    <text x="720" y="80" class="body" fill="#e0e0e0" font-size="18" font-weight="bold" text-anchor="end">{{stars}}</text>
+  </g>
+
+  <!-- ═══ ROW 3: Total Forks ═══ -->
+  <g class="row r3">
+    <g transform="translate(30,91)" stroke="#ff2d95" stroke-width="1.5" fill="none" stroke-linecap="round">
+      <circle cx="4" cy="2.5" r="2"/><circle cx="12" cy="2.5" r="2"/><circle cx="8" cy="13.5" r="2"/>
+      <path d="M4,4.5 L4,7 Q4,9 8,10 Q12,9 12,7 L12,4.5"/><line x1="8" y1="10" x2="8" y2="11.5"/>
+    </g>
+    <text x="56" y="104" class="body" fill="#e0e0e0" font-size="18">Total Forks</text>
+    <text x="720" y="104" class="body" fill="#e0e0e0" font-size="18" font-weight="bold" text-anchor="end">{{forks}}</text>
+  </g>
+
+  <!-- ═══ ROW 4: Followers ═══ -->
+  <g class="row r4">
+    <g transform="translate(30,115)" stroke="#ff2d95" stroke-width="1.5" fill="none" stroke-linecap="round">
+      <circle cx="8" cy="4" r="3.5"/><path d="M1,15 Q1,9 8,9 Q15,9 15,15"/>
+    </g>
+    <text x="56" y="128" class="body" fill="#e0e0e0" font-size="18">Followers</text>
+    <text x="720" y="128" class="body" fill="#e0e0e0" font-size="18" font-weight="bold" text-anchor="end">{{followers}}</text>
+  </g>
+
+  <!-- ═══ ROW 5: Following ═══ -->
+  <g class="row r5">
+    <g transform="translate(30,139)" stroke="#ff2d95" stroke-width="1.5" fill="none" stroke-linecap="round">
+      <circle cx="5" cy="4" r="3"/><path d="M0,14 Q0,9 5,9"/>
+      <circle cx="12" cy="4" r="3"/><path d="M7,14 Q7,9 12,9 Q17,9 17,14"/>
+    </g>
+    <text x="56" y="152" class="body" fill="#e0e0e0" font-size="18">Following</text>
+    <text x="720" y="152" class="body" fill="#e0e0e0" font-size="18" font-weight="bold" text-anchor="end">{{following}}</text>
+  </g>
+
+  <!-- ═══ SCANLINES ═══ -->
+  <rect x="2" y="2" width="756" height="186" rx="5" fill="url(#scan)" opacity="0.035"/>
+</svg>
