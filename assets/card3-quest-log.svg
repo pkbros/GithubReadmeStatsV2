@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 210" width="760" height="210">
+  <!--
+    CARD 3 — QUEST LOG | Neon Theme (amber #ff9100)
+    Tokens: {{commits}}, {{prs}}, {{issues}}, {{reviews}}, {{longest}}, {{current}}
+  -->
+  <style>
+    .marquee { font-family: 'Courier New', Courier, monospace; font-weight: bold; letter-spacing: 4px; text-transform: uppercase; }
+    .body    { font-family: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .row { opacity: 0; animation: fadeSlideIn 0.4s ease-out forwards; }
+    .r1 { animation-delay: 0.05s; } .r2 { animation-delay: 0.15s; }
+    .r3 { animation-delay: 0.25s; } .r4 { animation-delay: 0.35s; }
+    .r5 { animation-delay: 0.45s; } .r6 { animation-delay: 0.55s; }
+  </style>
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b2"/>
+      <feMerge><feMergeNode in="b2"/><feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="scan" patternUnits="userSpaceOnUse" width="760" height="4">
+      <rect width="760" height="1" fill="white"/>
+    </pattern>
+    <clipPath id="mClip"><rect x="6" y="3" width="748" height="20"/></clipPath>
+  </defs>
+
+  <!-- ═══ FRAME ═══ -->
+  <rect x="1" y="1" width="758" height="208" rx="6" ry="6" fill="#0a0a0f"/>
+  <rect x="1" y="1" width="758" height="208" rx="6" ry="6" fill="none" stroke="#ff9100" stroke-width="1.5" filter="url(#glow)" opacity="0.5"/>
+  <rect x="1" y="1" width="758" height="208" rx="6" ry="6" fill="none" stroke="#ff9100" stroke-width="1.5"/>
+  <rect x="5" y="5" width="750" height="200" rx="4" ry="4" fill="none" stroke="#ff9100" stroke-width="0.5" opacity="0.2"/>
+
+  <!-- ═══ MARQUEE ═══ -->
+  <rect x="2" y="2" width="756" height="22" rx="5" fill="#ff9100" opacity="0.06"/>
+  <line x1="6" y1="25" x2="754" y2="25" stroke="#ff9100" stroke-width="0.5" opacity="0.25"/>
+  <g clip-path="url(#mClip)">
+    <g><animateTransform attributeName="transform" type="translate" from="0 0" to="-760 0" dur="12s" repeatCount="indefinite"/>
+      <text x="0" y="18" class="marquee" fill="#ff9100" font-size="14" opacity="0.8">★ QUEST LOG ★ QUEST LOG ★ QUEST LOG ★ QUEST LOG ★ QUEST LOG</text>
+      <text x="760" y="18" class="marquee" fill="#ff9100" font-size="14" opacity="0.8">★ QUEST LOG ★ QUEST LOG ★ QUEST LOG ★ QUEST LOG ★ QUEST LOG ★ QUEST LOG ★ QUEST LOG ★ QUEST LOG </text>
+    </g>
+  </g>
+
+  <!-- ═══ ROW 1: Commits ═══ -->
+  <g class="row r1">
+    <g transform="translate(30,40)" stroke="#ff9100" stroke-width="1.5" fill="none" stroke-linecap="round">
+      <circle cx="8" cy="8" r="3"/><line x1="0" y1="8" x2="5" y2="8"/><line x1="11" y1="8" x2="16" y2="8"/>
+    </g>
+    <text x="56" y="53" class="body" fill="#e0e0e0" font-size="13">Total Commits</text>
+    <text x="720" y="53" class="body" fill="#e0e0e0" font-size="13" font-weight="bold" text-anchor="end">{{commits}}</text>
+  </g>
+
+  <!-- ═══ ROW 2: PRs ═══ -->
+  <g class="row r2">
+    <g transform="translate(30,64)" stroke="#ff9100" stroke-width="1.5" fill="none" stroke-linecap="round">
+      <circle cx="4" cy="3" r="2"/><line x1="4" y1="5" x2="4" y2="14"/>
+      <circle cx="12" cy="13" r="2"/><line x1="12" y1="3" x2="12" y2="11"/>
+      <polyline points="9.5,1 12,3 14.5,1"/>
+    </g>
+    <text x="56" y="77" class="body" fill="#e0e0e0" font-size="13">PRs Merged</text>
+    <text x="720" y="77" class="body" fill="#e0e0e0" font-size="13" font-weight="bold" text-anchor="end">{{prs}}</text>
+  </g>
+
+  <!-- ═══ ROW 3: Issues ═══ -->
+  <g class="row r3">
+    <g transform="translate(30,88)" stroke="#ff9100" stroke-width="1.5" fill="none" stroke-linecap="round">
+      <circle cx="8" cy="8" r="7"/><line x1="8" y1="4" x2="8" y2="9"/>
+      <circle cx="8" cy="12" r="1" fill="#ff9100" stroke="none"/>
+    </g>
+    <text x="56" y="101" class="body" fill="#e0e0e0" font-size="13">Issues Closed</text>
+    <text x="720" y="101" class="body" fill="#e0e0e0" font-size="13" font-weight="bold" text-anchor="end">{{issues}}</text>
+  </g>
+
+  <!-- ═══ ROW 4: Reviews ═══ -->
+  <g class="row r4">
+    <g transform="translate(30,112)" stroke="#ff9100" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0,8 Q8,1 16,8 Q8,15 0,8 Z"/><circle cx="8" cy="8" r="2.5"/>
+    </g>
+    <text x="56" y="125" class="body" fill="#e0e0e0" font-size="13">Code Reviews</text>
+    <text x="720" y="125" class="body" fill="#e0e0e0" font-size="13" font-weight="bold" text-anchor="end">{{reviews}}</text>
+  </g>
+
+  <!-- ═══ ROW 5: Longest Streak (static dim flame) ═══ -->
+  <g class="row r5">
+    <g transform="translate(30,136)" stroke="#ff9100" stroke-width="1.5" fill="none" stroke-linejoin="round" opacity="0.4">
+      <path d="M8,1 Q11,5 10,8 Q11,7 12.5,9 Q12,14 8,15 Q4,14 3.5,9 Q5,7 6,8 Q5,5 8,1 Z"/>
+    </g>
+    <text x="56" y="149" class="body" fill="#e0e0e0" font-size="13">Longest Streak</text>
+    <text x="720" y="149" class="body" fill="#e0e0e0" font-size="13" font-weight="bold" text-anchor="end">{{longest}} days</text>
+  </g>
+
+  <!-- ═══ ROW 6: Current Streak (glowing flame) ═══ -->
+  <g class="row r6">
+    <g transform="translate(30,160)" stroke="#ff9100" stroke-width="1.5" fill="none" stroke-linejoin="round" filter="url(#glow)">
+      <path d="M8,1 Q11,5 10,8 Q11,7 12.5,9 Q12,14 8,15 Q4,14 3.5,9 Q5,7 6,8 Q5,5 8,1 Z"/>
+    </g>
+    <text x="56" y="173" class="body" fill="#e0e0e0" font-size="13">Current Streak</text>
+    <text x="720" y="173" class="body" fill="#e0e0e0" font-size="13" font-weight="bold" text-anchor="end">{{current}} days</text>
+  </g>
+
+  <!-- ═══ SCANLINES ═══ -->
+  <rect x="2" y="2" width="756" height="206" rx="5" fill="url(#scan)" opacity="0.035"/>
+</svg>
