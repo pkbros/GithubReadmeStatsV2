@@ -16,8 +16,7 @@ import {
   FileText,
 } from "lucide-react";
 
-const API_BASE_URL =
-  "https://github-readmestats-71957385499.asia-south1.run.app";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://github-readmestats-71957385499.asia-south1.run.app";
 const CARD_IDS = ["1", "2", "3", "4", "5"];
 const FILE_NAMES = {
   1: "card1-identity.svg",
