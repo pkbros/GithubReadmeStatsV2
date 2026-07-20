@@ -1,6 +1,16 @@
-# 🌌 GitHub RPG Stats Cards (Neon Edition)
+# 🌌 GitHub Neon Stats Cards
 
-A backend-driven API platform that generates stunning, high-performance, neon-themed RPG stats cards for your GitHub profile README. Fully responsive, self-contained, and aggressively cached.
+A backend-driven API platform that generates stunning, high-performance, neon-themed stats cards for your GitHub profile README. Fully responsive, self-contained, and aggressively cached.
+
+---
+
+## 📌 Project Summary
+
+*   **Real-time GitHub Data Aggregation:** Fetches comprehensive user statistics (repositories, stars, forks, followers, commits, PRs, issues, code reviews, streaks, and top 5 languages) via GitHub GraphQL API.
+*   **Dynamic Vector (SVG) Engine:** Serves clean, standalone SVG vector graphics styled with neon glow filters, marquee animations, and sleek dark modes.
+*   **Smart Database Caching:** Features a 4-hour TTL caching system using Supabase PostgreSQL to protect against GitHub API rate limits.
+*   **Fail-safe Architecture:** Incorporates a 2-second database query timeout fallback—if the database experiences a cold start or network delay, the API gracefully falls back to fetching live data from GitHub without breaking user images.
+*   **Production-Ready & CDN Optimized:** Deployed on GCP Cloud Run with Docker, featuring `Cache-Control` headers tailored for GitHub's Camo image proxy.
 
 ---
 
@@ -24,7 +34,7 @@ Here is a live demonstration of how these cards look, powered by the live Cloud 
 To add these cards to your own GitHub profile README, copy and paste the Markdown below. Just replace `YOUR_GITHUB_USERNAME` with your actual username!
 
 ```markdown
-<!-- GitHub RPG Stats Cards -->
+<!-- GitHub Neon Stats Cards -->
 <p align="center">
   <img src="https://github-readmestats-71957385499.asia-south1.run.app/api/card/2?username=YOUR_GITHUB_USERNAME" alt="Stats Card" width="760" />
   <br/>
@@ -51,6 +61,16 @@ All rendering is handled on-the-fly via URL query parameters.
 
 ### Parameters
 *   `username` (Required): Your lowercase GitHub username. E.g., `?username=octocat`.
+
+---
+
+## 🗺️ Project Roadmap & Status
+
+- [x] **Phase 1 — Backend Core Engine:** Express server, GraphQL stats fetcher, streak calculation algorithm, and SVG string replacement engine.
+- [x] **Phase 2 — Supabase Caching Layer:** Postgres cache integration with 4-hour TTL and 2-second connection timeout fallback.
+- [x] **Phase 3 — Containerization & GCP Deployment:** Dockerized backend deployed on Google Cloud Run with Artifact Registry integration.
+- [ ] **Phase 4 — Frontend Live Customizer (In Progress):** React + Vite + Tailwind CSS dashboard with live card preview and token editing.
+- [ ] **Phase 5 — Extended Cards & Themes (Upcoming):** Identity (Card 1) & Footer (Card 5) support, avatar Base64 rendering, and custom color palettes.
 
 ---
 
@@ -86,6 +106,23 @@ All rendering is handled on-the-fly via URL query parameters.
 *   **Infrastructure:** GCP Cloud Run (Serverless Docker container deployment).
 *   **Data Aggregation:** GitHub GraphQL API.
 *   **Styles:** Inline SVG vectors with modern neon filter effects and responsive layout dimensions.
+
+---
+
+## 🤝 Contribution Guidelines
+
+We welcome community contributions to help improve this project! Please follow these guidelines:
+
+### 💡 Meaningful Contributions Only
+*   Only **well-tested, meaningful contributions** will be reviewed and accepted. This includes bug fixes, documentation improvements, performance optimizations, and well-designed new card templates.
+*   **No Automated / Agentic / AI Spam PRs:** Pull Requests created automatically by AI bots, unverified LLM scripts, or low-quality automated generators without human review and testing **will be rejected immediately**.
+
+### 🛠️ How to Contribute
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feature/amazing-new-card`
+3. Commit your changes: `git commit -m 'Add amazing new card'`
+4. Push to your branch: `git push origin feature/amazing-new-card`
+5. Open a Pull Request with a clear explanation of your changes.
 
 ---
 
@@ -132,10 +169,3 @@ CREATE TABLE github_cache (
 npm run dev
 ```
 Open your browser and visit: `http://localhost:3001/api/card/2?username=YOUR_USERNAME`
-
----
-
-## 🔒 Security & Optimization
-
-*   **Auto-Fallback:** The caching layer uses a 2-second timeout. If Supabase is sleeping or undergoing a cold start, the backend automatically bypasses the cache and fetches live from GitHub to ensure no broken images on profile pages.
-*   **GitHub Camo Friendly:** Every image response includes headers `Cache-Control: public, max-age=7200, stale-while-revalidate=3600` causing GitHub's CDN to proxy and serve the cards globally without burdening our API server.
