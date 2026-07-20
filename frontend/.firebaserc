@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "my-main-project-495108"
+  },
+  "targets": {
+    "my-main-project-495108": {
+      "hosting": {
+        "stats-app": [
+          "github-readme-stats-v2"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

@@ -66,7 +66,7 @@
  {{avatar_x="24"_y="34"_width="140"_height="140"}}
   
 
-        <!-- ═══ CONTENT ═══ -->
+          <!-- ═══ CONTENT ═══ -->
   <text x="186" y="54" class="display" fill="#00e5ff" font-size="32">{{name}} <animate attributeName="opacity" values="1;0;1" dur="1.5s" repeatCount="indefinite"/>
   </text>
   <text x="186" y="75" class="body" fill="#555" font-size="18">@{{username}}</text>
