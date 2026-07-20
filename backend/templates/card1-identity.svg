@@ -1,4 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 200" width="760" height="200">
+  <!-- METADATA: {
+        "id": "1",
+        "name": "Identity",
+        "source": "manual",
+        "controls": [
+          { "key": "name", "label": "name", "type": "text", "default": "First Second" },
+          { "key": "username", "label": "username", "type": "text", "default": "username" },
+          { "key": "bio", "label": "bio", "type": "text", "default": "I'm bad at biology" },
+          { "key": "avatar", "label": "Upload Avatar", "type": "avatar" },
+          { "key": "field_1", "label": "field_1", "type": "text", "default": "EMAIL" },
+          { "key": "value_1", "label": "value_1", "type": "text", "default": "agent0007@example.com" },
+          { "key": "field_2", "label": "field_2", "type": "text", "default": "LINKEDIN" },
+          { "key": "value_2", "label": "value_2", "type": "text", "default": "/in/linkedin-id" },
+          { "key": "field_3", "label": "field_3", "type": "text", "default": "STATUS" },
+          { "key": "value_3", "label": "value_3", "type": "text", "default": "Finding Art in Algorithms" }
+        ]
+      } -->
   <!--
     CARD 1 — IDENTITY | Neon Theme (cyan #00e5ff)
     Same tokens as RPG theme: {{name}}, {{username}}, {{bio}}, {{location}}, {{company}}, {{created_at}}
@@ -46,19 +63,22 @@
   <!-- ═══ AVATAR ═══ -->
   <rect x="22" y="32" width="144" height="144" rx="4" ry="4" fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
   <rect x="24" y="34" width="140" height="140" rx="3" ry="3" fill="#0f0f1a"/>
-  {{avatar}}
-  <!-- <image x="24" y="34" width="140" height="140" > -->
-  <!-- ═══ CONTENT ═══ -->
-  <text x="186" y="54" class="display" fill="#00e5ff" font-size="20">{{name}}</text>
-  <text x="186" y="72" class="body" fill="#555" font-size="13">@{{username}}</text>
-  <text x="186" y="98" class="body" fill="#e0e0e0" font-size="12">{{bio}}</text>
+ {{avatar_x="24"_y="34"_width="140"_height="140"}}
+  
 
-  <text x="186" y="128" class="body" fill="#00e5ff" font-size="13" opacity="0.7">LOCATION</text>
-  <text x="280" y="128" class="body" fill="#e0e0e0" font-size="13">{{location}}</text>
-  <text x="186" y="148" class="body" fill="#00e5ff" font-size="13" opacity="0.7">COMPANY</text>
-  <text x="280" y="148" class="body" fill="#e0e0e0" font-size="13">{{company}}</text>
-  <text x="186" y="168" class="body" fill="#00e5ff" font-size="13" opacity="0.7">JOINED</text>
-  <text x="280" y="168" class="body" fill="#e0e0e0" font-size="13">{{created_at}}</text>
+        <!-- ═══ CONTENT ═══ -->
+  <text x="186" y="54" class="display" fill="#00e5ff" font-size="32">{{name}} <animate attributeName="opacity" values="1;0;1" dur="1.5s" repeatCount="indefinite"/>
+  </text>
+  <text x="186" y="75" class="body" fill="#555" font-size="18">@{{username}}</text>
+  <text x="186" y="98" class="body" fill="#e0e0e0" font-size="13">{{bio}}</text>
+
+  <text x="186" y="128" class="body" fill="#00e5ff" font-size="13" opacity="0.7">{{field_1}}</text>
+  <text x="280" y="128" class="body" fill="#e0e0e0" font-size="13">{{value_1}}</text>
+  <text x="186" y="148" class="body" fill="#00e5ff" font-size="13" opacity="0.7">{{field_2}}</text>
+  <text x="280" y="148" class="body" fill="#e0e0e0" font-size="13">{{value_2}}</text>
+  <text x="186" y="168" class="body" fill="#00e5ff" font-size="13" opacity="0.7">{{field_3}}</text>
+  <text x="280" y="168" class="body" fill="#e0e0e0" font-size="13">{{value_3}}
+  </text>
 
   <!-- ═══ SCANLINES ═══ -->
   <rect x="2" y="2" width="756" height="196" rx="5" fill="url(#scan)" opacity="0.035"/>

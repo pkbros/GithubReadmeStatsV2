@@ -22,11 +22,9 @@ router.get("/:cardId", async (req, res) => {
   const { username } = req.query;
 
   // Validate cardId
-  if (!["2", "3", "4"].includes(cardId)) {
+  if (!["1", "2", "3", "4", "5"].includes(cardId)) {
     res.setHeader("Content-Type", "image/svg+xml");
-    return res.send(
-      renderErrorSvg(`Invalid Card ID: ${cardId}. Use 2, 3, or 4.`),
-    );
+    return res.send(renderErrorSvg(`Invalid Card ID: ${cardId}. Use 1 to 5.`));
   }
 
   // Validate username
@@ -45,9 +43,11 @@ router.get("/:cardId", async (req, res) => {
       statsData = await fetchGithubStats(username);
       await setCachedStats(username, statsData);
     }
+    // Parse all extra query parameters as overrides
+    const { username: _, ...overrides } = req.query;
 
-    // 3. Render SVG
-    const svg = renderCard(cardId, statsData);
+    // Render SVG
+    const svg = renderCard(cardId, statsData, overrides);
 
     // 4. Send response with headers
     res.setHeader("Content-Type", "image/svg+xml");
