@@ -14,6 +14,8 @@ import {
   MousePointerClick,
   RefreshCw,
   FileText,
+  Code,
+  Link,
 } from "lucide-react";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://github-readmestats-71957385499.asia-south1.run.app";
@@ -160,12 +162,11 @@ export default function EditorPage() {
     URL.revokeObjectURL(url);
   };
 
-  // Copy Markdown link for dynamic API cards
-  const handleCopyMarkdown = (cardId) => {
+  // Helper to build full card API URL with query overrides
+  const getCardApiUrl = (cardId) => {
     const params = new URLSearchParams();
     params.set("username", username || "octocat");
 
-    // Add only overrides relevant to this specific card's control keys
     const meta = allMetadata[cardId];
     if (meta?.controls) {
       meta.controls.forEach((control) => {
@@ -174,9 +175,32 @@ export default function EditorPage() {
       });
     }
 
-    const markdown = `![Card ${cardId}](${API_BASE_URL}/api/card/${cardId}?${params.toString()})`;
+    return `${API_BASE_URL}/api/card/${cardId}?${params.toString()}`;
+  };
+
+  // Copy Markdown tag
+  const handleCopyMarkdown = (cardId) => {
+    const url = getCardApiUrl(cardId);
+    const markdown = `![Card ${cardId}](${url})`;
     navigator.clipboard.writeText(markdown);
-    setCopiedId(cardId);
+    setCopiedId(`${cardId}-md`);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  // Copy HTML embed tag
+  const handleCopyHtml = (cardId) => {
+    const url = getCardApiUrl(cardId);
+    const html = `<img src="${url}" alt="Card ${cardId}" width="760" />`;
+    navigator.clipboard.writeText(html);
+    setCopiedId(`${cardId}-html`);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  // Copy Direct SVG API URL
+  const handleCopyDirectUrl = (cardId) => {
+    const url = getCardApiUrl(cardId);
+    navigator.clipboard.writeText(url);
+    setCopiedId(`${cardId}-url`);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
@@ -245,7 +269,7 @@ export default function EditorPage() {
                 </div>
 
                 {/* Per-card action buttons */}
-                <div className="flex justify-end gap-2 pr-1">
+                <div className="flex flex-wrap justify-end gap-1.5 pr-1">
                   {id === "1" ? (
                     <button
                       onClick={() => handleDownloadSvg(id)}
@@ -254,20 +278,53 @@ export default function EditorPage() {
                       <Download className="w-3.5 h-3.5" /> Download SVG
                     </button>
                   ) : (
-                    <button
-                      onClick={() => handleCopyMarkdown(id)}
-                      className="btn btn-sm btn-outline btn-primary gap-2 text-xs"
-                    >
-                      {copiedId === id ? (
-                        <>
-                          <Check className="w-3.5 h-3.5" /> Copied!
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3.5 h-3.5" /> Copy Markdown Link
-                        </>
-                      )}
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handleCopyMarkdown(id)}
+                        className="btn btn-xs btn-outline btn-primary gap-1.5 text-xs"
+                        title="Copy Markdown embed tag"
+                      >
+                        {copiedId === `${id}-md` ? (
+                          <>
+                            <Check className="w-3 h-3 text-success" /> Copied MD!
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3 h-3" /> Copy Markdown
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleCopyHtml(id)}
+                        className="btn btn-xs btn-outline btn-secondary gap-1.5 text-xs"
+                        title="Copy HTML embed tag"
+                      >
+                        {copiedId === `${id}-html` ? (
+                          <>
+                            <Check className="w-3 h-3 text-success" /> Copied HTML!
+                          </>
+                        ) : (
+                          <>
+                            <Code className="w-3 h-3" /> Copy HTML
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleCopyDirectUrl(id)}
+                        className="btn btn-xs btn-outline btn-accent gap-1.5 text-xs"
+                        title="Copy direct SVG API URL"
+                      >
+                        {copiedId === `${id}-url` ? (
+                          <>
+                            <Check className="w-3 h-3 text-success" /> Copied URL!
+                          </>
+                        ) : (
+                          <>
+                            <Link className="w-3 h-3" /> Direct URL
+                          </>
+                        )}
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
@@ -435,20 +492,52 @@ export default function EditorPage() {
                   <Download className="w-4 h-4" /> Download SVG File
                 </button>
               ) : (
-                <button
-                  onClick={() => handleCopyMarkdown(selectedCardId)}
-                  className="btn btn-primary btn-block gap-2 text-sm shadow-md"
-                >
-                  {copiedId === selectedCardId ? (
-                    <>
-                      <Check className="w-4 h-4" /> Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4" /> Copy Markdown Link
-                    </>
-                  )}
-                </button>
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => handleCopyMarkdown(selectedCardId)}
+                    className="btn btn-primary btn-block btn-sm gap-2 shadow-sm"
+                  >
+                    {copiedId === `${selectedCardId}-md` ? (
+                      <>
+                        <Check className="w-4 h-4" /> Copied Markdown Tag!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" /> Copy Markdown Tag
+                      </>
+                    )}
+                  </button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => handleCopyHtml(selectedCardId)}
+                      className="btn btn-secondary btn-outline btn-sm gap-1.5 text-xs"
+                    >
+                      {copiedId === `${selectedCardId}-html` ? (
+                        <>
+                          <Check className="w-3.5 h-3.5" /> Copied HTML!
+                        </>
+                      ) : (
+                        <>
+                          <Code className="w-3.5 h-3.5" /> Copy HTML Embed
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => handleCopyDirectUrl(selectedCardId)}
+                      className="btn btn-accent btn-outline btn-sm gap-1.5 text-xs"
+                    >
+                      {copiedId === `${selectedCardId}-url` ? (
+                        <>
+                          <Check className="w-3.5 h-3.5" /> Copied URL!
+                        </>
+                      ) : (
+                        <>
+                          <Link className="w-3.5 h-3.5" /> Copy Direct URL
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>
