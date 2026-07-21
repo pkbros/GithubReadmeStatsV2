@@ -16,6 +16,32 @@ function renderErrorSvg(message) {
       </svg>`;
 }
 
+// Helper to generate a neon-themed rate limit fallback SVG
+function renderRateLimitSvg(username) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 190" width="760" height="190">
+        <style>
+          .txt { font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; }
+        </style>
+        <rect x="1" y="1" width="758" height="188" rx="8" fill="#0a0a0f" stroke="#ff9500" stroke-width="1.5"/>
+        <text x="50%" y="36%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#ff9500" font-size="15" font-weight="bold">⏳ GITHUB API RATE LIMIT COOLING DOWN</text>
+        <text x="50%" y="56%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#e0e0e0" font-size="12">Live stats for @${username} are temporarily paused</text>
+        <text x="50%" y="74%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#777777" font-size="10">GitHub API quota exceeded. Card will auto-update shortly.</text>
+      </svg>`;
+}
+
+// Helper to generate a neon-themed network timeout fallback SVG
+function renderNetworkTimeoutSvg(username) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 190" width="760" height="190">
+        <style>
+          .txt { font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; }
+        </style>
+        <rect x="1" y="1" width="758" height="188" rx="8" fill="#0a0a0f" stroke="#00f0ff" stroke-width="1.5"/>
+        <text x="50%" y="36%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#00f0ff" font-size="15" font-weight="bold">⚡ GITHUB CONNECTION TIMEOUT</text>
+        <text x="50%" y="56%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#e0e0e0" font-size="12">Unable to reach GitHub servers for @${username}</text>
+        <text x="50%" y="74%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#777777" font-size="10">Retrying connection in background. Please refresh in a moment.</text>
+      </svg>`;
+}
+
 // GET /api/card/:cardId
 router.get("/:cardId", async (req, res) => {
   const { cardId } = req.params;
@@ -59,6 +85,17 @@ router.get("/:cardId", async (req, res) => {
   } catch (error) {
     console.error(`Error generating card ${cardId}:`, error.message);
     res.setHeader("Content-Type", "image/svg+xml");
+
+    if (error.isRateLimit) {
+      res.setHeader("Cache-Control", "public, max-age=300");
+      return res.send(renderRateLimitSvg(username));
+    }
+
+    if (error.isNetworkTimeout) {
+      res.setHeader("Cache-Control", "public, max-age=60");
+      return res.send(renderNetworkTimeoutSvg(username));
+    }
+
     res.send(renderErrorSvg(error.message || "Failed to generate card"));
   }
 });
