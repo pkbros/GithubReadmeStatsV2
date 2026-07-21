@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { fetchGithubStats } = require("../services/github");
 const { renderCard } = require("../services/renderer");
-const { getCachedStats, setCachedStats } = require("../services/cache");
+const {
+  getCachedStats,
+  getStaleCachedStats,
+  setCachedStats,
+} = require("../services/cache");
 
 // Helper to generate a neon-themed error SVG
 function renderErrorSvg(message) {
@@ -86,14 +90,31 @@ router.get("/:cardId", async (req, res) => {
     console.error(`Error generating card ${cardId}:`, error.message);
     res.setHeader("Content-Type", "image/svg+xml");
 
-    if (error.isRateLimit) {
-      res.setHeader("Cache-Control", "public, max-age=300");
-      return res.send(renderRateLimitSvg(username));
-    }
+    if (error.isRateLimit || error.isNetworkTimeout) {
+      // 1. Try to serve last cached data from DB even if TTL has passed
+      try {
+        const staleStats = await getStaleCachedStats(username);
+        if (staleStats) {
+          console.log(`Serving STALE cache for user: ${username} during API error/rate-limit`);
+          const { username: _, ...overrides } = req.query;
+          const svg = renderCard(cardId, staleStats, overrides);
+          res.setHeader("Cache-Control", "public, max-age=300");
+          return res.send(svg);
+        }
+      } catch (staleErr) {
+        console.error("Failed to retrieve stale cache fallback:", staleErr.message);
+      }
 
-    if (error.isNetworkTimeout) {
-      res.setHeader("Cache-Control", "public, max-age=60");
-      return res.send(renderNetworkTimeoutSvg(username));
+      // 2. If user is NOT in DB already, return Rate Limit or Connection Timeout SVG
+      if (error.isRateLimit) {
+        res.setHeader("Cache-Control", "public, max-age=300");
+        return res.send(renderRateLimitSvg(username));
+      }
+
+      if (error.isNetworkTimeout) {
+        res.setHeader("Cache-Control", "public, max-age=60");
+        return res.send(renderNetworkTimeoutSvg(username));
+      }
     }
 
     res.send(renderErrorSvg(error.message || "Failed to generate card"));
