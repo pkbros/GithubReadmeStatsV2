@@ -101,7 +101,41 @@ async function setCachedStats(username, data) {
   }
 }
 
+/**
+ * Gets cached stats for a username regardless of TTL expiration (stale fallback for rate limits).
+ */
+async function getStaleCachedStats(username) {
+  if (!supabase) return null;
+
+  const normalizedUsername = username.toLowerCase();
+
+  try {
+    const dbQuery = supabase
+      .from("github_cache")
+      .select("data")
+      .eq("username", normalizedUsername)
+      .single();
+
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Database query timed out")), 2000),
+    );
+
+    const { data, error } = await Promise.race([dbQuery, timeoutPromise]);
+
+    if (error || !data) {
+      return null;
+    }
+
+    console.log(`Serving STALE cache fallback for user: ${normalizedUsername}`);
+    return data.data;
+  } catch (error) {
+    console.error(`Stale cache fallback lookup failed for ${normalizedUsername}:`, error.message);
+    return null;
+  }
+}
+
 module.exports = {
   getCachedStats,
+  getStaleCachedStats,
   setCachedStats,
 };

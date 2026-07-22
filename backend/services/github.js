@@ -160,11 +160,17 @@ async function fetchGithubStats(username) {
           Authorization: `bearer ${token}`,
           "Content-Type": "application/json",
         },
+        timeout: 8000,
       },
     );
 
     if (response.data.errors) {
-      throw new Error(response.data.errors[0].message);
+      const errMsg = response.data.errors[0].message;
+      const gqlErr = new Error(errMsg);
+      if (errMsg.toLowerCase().includes("rate limit")) {
+        gqlErr.isRateLimit = true;
+      }
+      throw gqlErr;
     }
 
     const userData = response.data.data.user;
@@ -231,8 +237,26 @@ async function fetchGithubStats(username) {
       languages,
     };
   } catch (error) {
-    console.error("Error fetching stats from GitHub API:", error.message);
-    throw error;
+    const isRateLimit =
+      error.isRateLimit ||
+      error.response?.status === 403 ||
+      error.response?.status === 429 ||
+      (error.message && error.message.toLowerCase().includes("rate limit"));
+
+    const isNetworkTimeout =
+      error.code === "ETIMEDOUT" ||
+      error.code === "ECONNREFUSED" ||
+      error.code === "ENOTFOUND" ||
+      error.code === "ECONNABORTED" ||
+      (error.message && error.message.toLowerCase().includes("timeout"));
+
+    console.error(`GitHub API Fetch Error [user: ${username}]:`, error.message);
+
+    const customError = new Error(error.message || "Failed to fetch stats from GitHub API");
+    customError.isRateLimit = isRateLimit;
+    customError.isNetworkTimeout = isNetworkTimeout;
+    customError.status = error.response?.status;
+    throw customError;
   }
 }
 
