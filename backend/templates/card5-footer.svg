@@ -10,23 +10,23 @@
           { "key": "heart_1_fill", "label": "heart_1_fill", "type": "color", "default": "#ff1744" },
           { "key": "heart_2_fill", "label": "heart_2_fill", "type": "color", "default": "#ff1744" },
           { "key": "heart_3_fill", "label": "heart_3_fill", "type": "color", "default": "#1a1a2e" },
-          { "key": "heart_1_animation", "label": "heart_1_animation", "type": "select", "default": "<animateTransform attributeName='transform' type='scale' values='1;1.08;1' dur='1.2s' repeatCount='indefinite'/>", "options": [
-            { "label": "None", "value": "" },
-            { "label": "Pulse", "value": "<animateTransform attributeName='transform' type='scale' values='1;1.08;1' dur='1.2s' repeatCount='indefinite'/>" },
-            { "label": "Blink", "value": "<animate attributeName='opacity' values='1;0;1' dur='1s' repeatCount='indefinite'/>" },
-            { "label": "Fade", "value": "<animate attributeName='opacity' values='1;0.3;1' dur='2s' repeatCount='indefinite'/>" }
+          { "key": "heart_1_animation", "label": "heart_1_animation", "type": "select", "default": "pulse", "options": [
+            { "label": "None", "value": "none" },
+            { "label": "Pulse", "value": "pulse" },
+            { "label": "Blink", "value": "blink" },
+            { "label": "Fade", "value": "fade" }
           ]},
-          { "key": "heart_2_animation", "label": "heart_2_animation", "type": "select", "default": "<animate attributeName='opacity' values='1;0;1' dur='1s' repeatCount='indefinite'/>", "options": [
-            { "label": "None", "value": "" },
-            { "label": "Pulse", "value": "<animateTransform attributeName='transform' type='scale' values='1;1.08;1' dur='1.2s' repeatCount='indefinite'/>" },
-            { "label": "Blink", "value": "<animate attributeName='opacity' values='1;0;1' dur='1s' repeatCount='indefinite'/>" },
-            { "label": "Fade", "value": "<animate attributeName='opacity' values='1;0.3;1' dur='2s' repeatCount='indefinite'/>" }
+          { "key": "heart_2_animation", "label": "heart_2_animation", "type": "select", "default": "blink", "options": [
+            { "label": "None", "value": "none" },
+            { "label": "Pulse", "value": "pulse" },
+            { "label": "Blink", "value": "blink" },
+            { "label": "Fade", "value": "fade" }
           ]},
-            { "label": "None", "value": "" },
-          { "key": "heart_3_animation", "label": "heart_3_animation", "type": "select", "default": "", "options": [
-            { "label": "Pulse", "value": "<animateTransform attributeName='transform' type='scale' values='1;1.08;1' dur='1.2s' repeatCount='indefinite'/>" },
-            { "label": "Blink", "value": "<animate attributeName='opacity' values='1;0;1' dur='1s' repeatCount='indefinite'/>" },
-            { "label": "Fade", "value": "<animate attributeName='opacity' values='1;0.3;1' dur='2s' repeatCount='indefinite'/>" }
+          { "key": "heart_3_animation", "label": "heart_3_animation", "type": "select", "default": "none", "options": [
+            { "label": "None", "value": "none" },
+            { "label": "Pulse", "value": "pulse" },
+            { "label": "Blink", "value": "blink" },
+            { "label": "Fade", "value": "fade" }
           ]}
         ]
       } -->
