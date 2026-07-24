@@ -136,5 +136,6 @@ function renderCard(cardId, data, overrides = {}) {
 
 module.exports = {
   renderCard,
+  buildTokenMap,
   reloadTemplates: loadTemplates,
 };
