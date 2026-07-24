@@ -1,42 +1,38 @@
-# 🌌 GitHub Neon Stats Cards
+# GitHub Neon Stats Cards
 
-A backend-driven API platform that generates stunning, high-performance, neon-themed stats cards for your GitHub profile README. Fully responsive, self-contained, and aggressively cached.
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Dashboard-00f0ff?style=for-the-badge&logo=firebase&logoColor=white)](https://github-readme-stats-v2.web.app)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-👉 **Customize yours live on the Dashboard:** [https://github-readme-stats-v2.web.app](https://github-readme-stats-v2.web.app)
+A backend API and React dashboard for generating neon-themed GitHub profile stats cards. Cards are rendered directly as SVG vector images and cached using Supabase to stay within GitHub API rate limits.
 
----
-
-## 📌 Project Summary
-
-*   **Real-time GitHub Data Aggregation:** Fetches comprehensive user statistics (repositories, stars, forks, followers, commits, PRs, issues, code reviews, streaks, and top 5 languages) via GitHub GraphQL API.
-*   **Dynamic Vector (SVG) Engine:** Serves clean, standalone SVG vector graphics styled with neon glow filters, marquee animations, and sleek dark modes.
-*   **Smart Database Caching:** Features a 4-hour TTL caching system using Supabase PostgreSQL to protect against GitHub API rate limits.
-*   **Fail-safe Architecture:** Incorporates a 2-second database query timeout fallback—if the database experiences a cold start or network delay, the API gracefully falls back to fetching live data from GitHub without breaking user images.
-*   **Production-Ready & CDN Optimized:** Deployed on GCP Cloud Run with Docker, featuring `Cache-Control` headers tailored for GitHub's Camo image proxy.
-
----
-
-## 🎨 Live Preview
-
-Here is a live demonstration of how these cards look, powered by the live Cloud Run deployment:
-
-### 1. Stats Card (Card 2)
-![Stats Card](https://github-readmestats-71957385499.asia-south1.run.app/api/card/2?username=pkbros)
-
-### 2. Quest Log Card (Card 3)
-![Quest Log Card](https://github-readmestats-71957385499.asia-south1.run.app/api/card/3?username=pkbros)
-
-### 3. Tech Stack Card (Card 4)
-![Tech Stack Card](https://github-readmestats-71957385499.asia-south1.run.app/api/card/4?username=pkbros)
+Customize and preview your cards live on the dashboard: [https://github-readme-stats-v2.web.app](https://github-readme-stats-v2.web.app)
 
 ---
 
-## 🚀 Quick Start (Add to your profile)
+## Available Cards
 
-To add these cards to your own GitHub profile README, copy and paste the Markdown below. Just replace `YOUR_GITHUB_USERNAME` with your actual username!
+| Card ID | Name | Type | Description |
+|:---:|---|---|---|
+| **1** | Identity | Static / Exportable | Profile card with bio, custom avatar upload, and customizable info rows. |
+| **2** | Stats | Dynamic API | Displays total Repositories, Stars, Forks, Followers, and Following. |
+| **3** | Quest Log | Dynamic API | Displays Commits, PRs, Closed Issues, Code Reviews, and Streaks. |
+| **4** | Tech Stack | Dynamic API | Displays top 5 languages used across public repositories. |
+| **5** | Footer | Dynamic API | Typewriter quote bar with customizable animated hearts. |
 
+---
+
+## Quick Start (Profile Embedding)
+
+Add dynamic cards directly to your GitHub profile `README.md` by pasting the HTML or Markdown snippets below. Replace `YOUR_GITHUB_USERNAME` with your GitHub username:
+
+### Markdown
 ```markdown
-<!-- GitHub Neon Stats Cards -->
 <p align="center">
   <img src="https://github-readmestats-71957385499.asia-south1.run.app/api/card/2?username=YOUR_GITHUB_USERNAME" alt="Stats Card" width="760" />
   <br/>
@@ -46,122 +42,85 @@ To add these cards to your own GitHub profile README, copy and paste the Markdow
 </p>
 ```
 
----
-
-## 🛠️ Card Customization & API Reference
-
-All rendering is handled on-the-fly via URL query parameters.
-
-### Base Endpoint
-`GET https://github-readmestats-71957385499.asia-south1.run.app/api/card/:cardId`
-
-| Card ID | Card Name | Theme | Description |
-|:---:|---|---|---|
-| **`1`** | Identity | Neon Cyan | Shows name, username, bio, custom avatar, and 3 customizable info rows (static host). |
-| **`2`** | Stats | Neon Pink | Shows your total Repositories, Stars, Forks, Followers, and Following (dynamic API). |
-| **`3`** | Quest Log | Neon Orange | Shows your annual Commits, PRs, Closed Issues, Code Reviews, and streaks (dynamic API). |
-| **`4`** | Tech Stack | Neon Green | Analyzes and compiles your top 5 languages used across all repositories (dynamic API). |
-| **`5`** | Footer | Neon Red | Terminal typewriter quote cycle with custom heart fill and animation controls (dynamic API). |
-
-### Parameters (Cards 2-5)
-*   `username` (Required): Your lowercase GitHub username. E.g., `?username=octocat`.
-*   *Card 5 overrides:* `heart_1_fill`, `heart_1_animation`, `quote_1_text`, etc.
-
----
-
-## 🗺️ Project Roadmap & Status
-
-- [x] **Phase 1 — Backend Core Engine:** Express server, GraphQL stats fetcher, streak calculation, and SVG string replacement.
-- [x] **Phase 2 — Supabase Caching Layer:** Postgres cache integration with 4-hour TTL and 2-second connection timeout fallback.
-- [x] **Phase 3 — Containerization & GCP Deployment:** Dockerized backend deployed on Google Cloud Run with Artifact Registry.
-- [x] **Phase 4 — Frontend Live Customizer:** React + Vite + Tailwind CSS + DaisyUI 5 dashboard deployed on Firebase Hosting.
-- [x] **Phase 5 — Static Card Downloading:** Direct browser downloading for high-asset SVG cards (Card 1) to circumvent URL length limits.
-
----
-
-## ⚡ Tech Stack & Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                       USER PROFILE README                   │
-│         (Loads dynamically through GitHub Camo Proxy)       │
-└──────────────────────────────┬──────────────────────────────┘
-                               │ (Requests SVG)
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    EXPRESS API (Cloud Run)                  │
-│                                                             │
-│   1. Receives request for Card ID                           │
-│   2. Checks database cache (Supabase lookup < 20ms)         │
-│   3. Cache hit? Returns cached SVG                          │
-│   4. Cache miss? Fetches GitHub GraphQL, updates cache,      │
-│      injects stats into SVG template, and returns image     │
-└──────────────────────┬──────────────────────────────┬───────┘
-                       │                              │
-             (Check / Write Cache)               (Fetch Stats)
-                       ▼                              ▼
-             ┌───────────────────┐          ┌───────────────────┐
-             │   Supabase DB     │          │    GitHub API     │
-             │  (4h Cache TTL)   │          │     (GraphQL)     │
-             └───────────────────┘          └───────────────────┘
+### HTML
+```html
+<img src="https://github-readmestats-71957385499.asia-south1.run.app/api/card/2?username=YOUR_GITHUB_USERNAME" alt="Stats Card" width="760" />
 ```
 
-*   **Runtime:** Node.js + Express
-*   **Frontend SPA:** React 19 + Vite 8 + Tailwind CSS 4 + DaisyUI 5
-*   **Database Caching:** Supabase (PostgreSQL) with a 4-hour expiration system.
-*   **Infrastructure:** GCP Cloud Run (Serverless Docker container) & Firebase Hosting (SPA frontend static host).
-*   **Data Aggregation:** GitHub GraphQL API.
+---
+
+## How It Works
+
+1. **Request**: GitHub's image proxy (Camo) or a browser requests `/api/card/:cardId?username=yourname`.
+2. **Cache Check**: The backend checks Supabase PostgreSQL for cached stats (4-hour default TTL).
+3. **API Fetch**: On a cache miss, stats are fetched from GitHub's GraphQL API, stored in Supabase, and rendered into SVG card templates.
+4. **Rate Limit Fallback**: If GitHub's API rate limit is reached, the backend serves the last cached snapshot from the database (or a cooldown SVG card for new users).
 
 ---
 
-## 🤝 Contribution Guidelines
+## Tech Stack
 
-We welcome community contributions to help improve this project! Please follow these guidelines:
-
-### 💡 Meaningful Contributions Only
-*   Only **well-tested, meaningful contributions** will be reviewed and accepted. This includes bug fixes, documentation improvements, performance optimizations, and well-designed new card templates.
-*   **No Automated / Agentic / AI Spam PRs:** Pull Requests created automatically by AI bots, unverified LLM scripts, or low-quality automated generators without human review and testing **will be rejected immediately**.
+- **Backend**: Node.js, Express, Axios, Supabase (PostgreSQL)
+- **Frontend**: React 19, Vite, Tailwind CSS 4, DaisyUI 5, Lucide Icons
+- **Deployment**: GCP Cloud Run (Backend API), Firebase Hosting (Frontend SPA)
 
 ---
 
-## 💻 Local Development Setup
+## Local Development Setup
 
-If you wish to host your own instance of this platform, follow the setup instructions below.
+### Prerequisites
+- Node.js (v18+)
+- GitHub Personal Access Token (PAT) with `read:user` permissions
+- Supabase Project (URL and Service Role Key)
 
-### 1. Prerequisites
-*   Node.js (v24+ recommended)
-*   GitHub Personal Access Token (PAT) with `read:user` permission.
-*   Supabase database instance (free tier is fully compatible).
-*   Firebase CLI (optional for frontend hosting).
+### 1. Backend Setup
 
-### 2. Backend Local Setup
 ```bash
-# Clone the repository
-git clone https://github.com/pkbros/GithubReadmeStatsV2.git
-cd GithubReadmeStatsV2/backend
-
-# Install dependencies
+cd backend
 npm install
+cp .env.example .env
+```
 
-# Create D:\projects\GithubReadmeStatsV2\backend\.env file:
-# PORT=3001
-# GITHUB_PAT=ghp_your_personal_access_token
-# SUPABASE_URL=https://your-project-id.supabase.co
-# SUPABASE_KEY=your-supabase-service-role-key
-# CACHE_TTL_HOURS=4
+Configure your environment variables in `backend/.env`:
+```ini
+PORT=3001
+GITHUB_PAT=your_github_personal_access_token
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_KEY=your_supabase_service_role_key
+CACHE_TTL_HOURS=4
+```
 
-# Run in development mode
+Start the backend development server:
+```bash
 npm run dev
 ```
+The server will run on `http://localhost:3001`.
 
-### 3. Frontend Local Setup
+### 2. Frontend Setup
+
 ```bash
 cd ../frontend
-
-# Install dependencies
 npm install
+cp .env.example .env
+```
 
-# Run Vite dev server
+Configure your environment variables in `frontend/.env`:
+```ini
+VITE_API_URL=http://localhost:3001
+```
+
+Start the Vite development server:
+```bash
 npm run dev
 ```
-Open your browser to `http://localhost:5173`.
+Open `http://localhost:5173` in your browser to view the Live Customizer Dashboard.
+
+---
+
+## Contributing
+
+We welcome community contributions! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for branch naming rules, PR title formats, and submission guidelines.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
