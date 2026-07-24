@@ -236,4 +236,8 @@ async function fetchGithubStats(username) {
   }
 }
 
-module.exports = { fetchGithubStats };
+module.exports = {
+  fetchGithubStats,
+  calculateStreaks,
+  aggregateLanguages,
+};
