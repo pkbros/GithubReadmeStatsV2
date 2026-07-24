@@ -1,5 +1,14 @@
 # GitHub Neon Stats Cards
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Dashboard-00f0ff?style=for-the-badge&logo=firebase&logoColor=white)](https://github-readme-stats-v2.web.app)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+
 A backend API and React dashboard for generating neon-themed GitHub profile stats cards. Cards are rendered directly as SVG vector images and cached using Supabase to stay within GitHub API rate limits.
 
 Customize and preview your cards live on the dashboard: [https://github-readme-stats-v2.web.app](https://github-readme-stats-v2.web.app)
