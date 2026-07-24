@@ -34,18 +34,83 @@ function loadTemplates() {
 
 loadTemplates();
 
+/**
+ * Escapes a value for safe inclusion in SVG/XML, in both text content and
+ * quoted attribute positions. Done in a single pass over a character class so
+ * that "&" cannot be double-escaped by a later replacement.
+ */
+function escapeXml(value) {
+  return String(value ?? "").replace(
+    /[<>&"']/g,
+    (c) =>
+      ({
+        "<": "&lt;",
+        ">": "&gt;",
+        "&": "&amp;",
+        '"': "&quot;",
+        "'": "&apos;",
+      })[c],
+  );
+}
+
+/**
+ * Server-side allowlist of heart animations. Callers send a key (e.g. "pulse")
+ * and the server resolves it to markup — arbitrary SVG is never accepted from
+ * user input. These are the only values ever substituted into the template
+ * unescaped, and they are defined here rather than derived from a request.
+ */
+const HEART_ANIMATIONS = {
+  none: "",
+  pulse:
+    "<animateTransform attributeName='transform' type='scale' values='1;1.08;1' dur='1.2s' repeatCount='indefinite'/>",
+  blink:
+    "<animate attributeName='opacity' values='1;0;1' dur='1s' repeatCount='indefinite'/>",
+  fade: "<animate attributeName='opacity' values='1;0.3;1' dur='2s' repeatCount='indefinite'/>",
+};
+
+/**
+ * Transitional mapping so clients still sending the previous raw-markup values
+ * keep working during rollout. Only these exact, known-good strings are
+ * recognised; anything else falls back to "none". Safe to delete once the
+ * deployed frontend sends keys.
+ */
+const LEGACY_ANIMATION_MARKUP = new Map([
+  [HEART_ANIMATIONS.pulse, "pulse"],
+  [HEART_ANIMATIONS.blink, "blink"],
+  [HEART_ANIMATIONS.fade, "fade"],
+]);
+
+/** Resolves a user-supplied animation value to allowlisted markup. */
+function resolveHeartAnimation(raw) {
+  if (raw === undefined || raw === null || raw === "") return HEART_ANIMATIONS.none;
+  const value = String(raw);
+  const key = HEART_ANIMATIONS[value.toLowerCase()] !== undefined
+    ? value.toLowerCase()
+    : LEGACY_ANIMATION_MARKUP.get(value);
+  return key ? HEART_ANIMATIONS[key] : HEART_ANIMATIONS.none;
+}
+
+/** Hex colours only (#RGB, #RRGGBB, #RRGGBBAA); anything else uses the default. */
+const HEX_COLOR_RE = /^#[0-9a-fA-F]{3,8}$/;
+
+function resolveColor(raw, fallback) {
+  return typeof raw === "string" && HEX_COLOR_RE.test(raw) ? raw : fallback;
+}
+
 function buildTokenMap(data, overrides = {}) {
   const map = {
     // Card 1 — Identity
-    name: overrides.name || data.name || data.username || "",
-    username: data.username || "",
-    bio: overrides.bio || data.bio || "",
-    field_1: overrides.field_1 || "EMAIL",
-    value_1: overrides.value_1 || "",
-    field_2: overrides.field_2 || "LINKEDIN",
-    value_2: overrides.value_2 || "",
-    field_3: overrides.field_3 || "STATUS",
-    value_3: overrides.value_3 || "",
+    // Every value here is escaped: query overrides are attacker-controlled, and
+    // so are the GitHub-sourced fields (a user controls their own name/bio).
+    name: escapeXml(overrides.name || data.name || data.username || ""),
+    username: escapeXml(data.username || ""),
+    bio: escapeXml(overrides.bio || data.bio || ""),
+    field_1: escapeXml(overrides.field_1 || "EMAIL"),
+    value_1: escapeXml(overrides.value_1 || ""),
+    field_2: escapeXml(overrides.field_2 || "LINKEDIN"),
+    value_2: escapeXml(overrides.value_2 || ""),
+    field_3: escapeXml(overrides.field_3 || "STATUS"),
+    value_3: escapeXml(overrides.value_3 || ""),
 
     // Card 2 — Stats
     repos: String(data.repos || 0),
@@ -63,13 +128,16 @@ function buildTokenMap(data, overrides = {}) {
     current: String(data.current_streak || 0),
 
     // Card 5 — Footer
-    quote_1_text:
+    quote_1_text: escapeXml(
       overrides.quote_1_text ||
-      "Code is like humor. When you have to explain it, its bad.",
-    quote_2_text:
+        "Code is like humor. When you have to explain it, its bad.",
+    ),
+    quote_2_text: escapeXml(
       overrides.quote_2_text || "Simplicity is prerequisite for reliability.",
-    quote_3_text:
+    ),
+    quote_3_text: escapeXml(
       overrides.quote_3_text || "Make it work, make it right, make it fast.",
+    ),
   };
 
   // Card 4 — Languages
@@ -84,9 +152,9 @@ function buildTokenMap(data, overrides = {}) {
     data.languages.forEach((lang, index) => {
       const n = index + 1;
       if (n <= 5) {
-        map[`lang_${n}_name`] = lang.name;
-        map[`lang_${n}_pct`] = lang.pct.toFixed(1);
-        map[`lang_${n}_color`] = lang.color;
+        map[`lang_${n}_name`] = escapeXml(lang.name);
+        map[`lang_${n}_pct`] = Number(lang.pct || 0).toFixed(1);
+        map[`lang_${n}_color`] = resolveColor(lang.color, "#1a1a2e");
         map[`lang_${n}_dashoffset`] = String(
           440 - Math.round((lang.pct / 100) * 440),
         );
@@ -95,9 +163,16 @@ function buildTokenMap(data, overrides = {}) {
   }
 
   // Card 5 — Hearts
+  // Fills are validated as hex colours; animations are resolved from a
+  // server-side allowlist. Neither accepts arbitrary markup from the caller.
   for (let h = 1; h <= 3; h++) {
-    map[`heart_${h}_fill`] = overrides[`heart_${h}_fill`] || "#1a1a2e";
-    map[`heart_${h}_animation`] = overrides[`heart_${h}_animation`] || "";
+    map[`heart_${h}_fill`] = resolveColor(
+      overrides[`heart_${h}_fill`],
+      "#1a1a2e",
+    );
+    map[`heart_${h}_animation`] = resolveHeartAnimation(
+      overrides[`heart_${h}_animation`],
+    );
   }
 
   return map;
@@ -110,11 +185,15 @@ function renderCard(cardId, data, overrides = {}) {
   }
 
   const tokenMap = buildTokenMap(data, overrides);
-  let renderedSvg = template;
 
-  for (const [key, value] of Object.entries(tokenMap)) {
-    renderedSvg = renderedSvg.replaceAll(`{{${key}}}`, value);
-  }
+  // Single pass: substituted content is never re-scanned, so a value cannot
+  // introduce a "{{token}}" that a later iteration would then expand. Unknown
+  // tokens are left intact (the Card 1 avatar token is handled below).
+  let renderedSvg = template.replace(/\{\{(\w+)\}\}/g, (match, key) =>
+    Object.prototype.hasOwnProperty.call(tokenMap, key)
+      ? tokenMap[key]
+      : match,
+  );
 
   // Card 1 Avatar: Since we download locally on the frontend,
   // the API will render a default visual placeholder rect.
