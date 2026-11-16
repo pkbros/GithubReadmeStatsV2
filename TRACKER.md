@@ -4,7 +4,7 @@ Single source of truth for project status, decisions, and next steps. Read this 
 
 ## Current phase
 
-**MongoDB migration complete and live-verified against Atlas; commit + deploy pending.** The MVP is built and deployed (Cloud Run + Firebase). The cache layer now uses MongoDB instead of Supabase. Nothing has been committed or deployed since these changes began.
+**Bug hardening + MongoDB migration are committed and deployed.** Cloud Run revision `github-readmestats-00005-tnh` serves the new code with MongoDB caching, verified live (MISS → fetch → upsert → HIT). Commit `461225e` on `main` holds all changes. The frontend build was not redeployed (Firebase CLI is not installed).
 
 ## Session log
 
@@ -41,7 +41,7 @@ Single source of truth for project status, decisions, and next steps. Read this 
 
 #### Proof (observed output)
 
-- Backend `npm test`: **36/36 pass** (was 12/12 at start).
+- Backend `npm test`: **38/38 pass** (was 12/12 at start).
 - Frontend `npm run build`: **success** (1788 modules, no errors).
 - Frontend renderer check: **6/6 pass**.
 - Server smoke (cache disabled): health 200, error SVGs valid, templates load.
@@ -51,9 +51,18 @@ Single source of truth for project status, decisions, and next steps. Read this 
 - **Live local E2E** (real PAT from Cloud Run, real Atlas): **PASS** — card 2 miss 988ms → hit 54ms, escaping (`AI &amp; Systems &lt;3`), duplicate username rejected, all 5 cards render with no `{{tokens}}`, stats endpoint returns numbers, graceful shutdown.
 - Heart animation values are whitelisted (Pulse/Blink/Fade only); unknown markup falls back to the default and cannot inject SVG.
 
-#### Not verified yet
+#### C. Deployment (done)
 
-- Live **deployed** card generation against Atlas — requires redeploy and the Cloud Run env vars. The local Atlas round-trip is verified.
+- Image `asia-south1-docker.pkg.dev/my-main-project-495108/github-readme-stats/github-readmestats:mongo-20261116` built by Cloud Build (48s).
+- Cloud Run `github-readmestats` revision `00005-tnh`, region `asia-south1`, 100% traffic.
+- Env: `GITHUB_PAT`, `MONGODB_URI`, `MONGODB_DB`, `CACHE_TTL_HOURS` — Supabase vars removed.
+- Live checks: health 200; card 2 `pkbros` **MISS 3122ms → HIT 90ms**; all 5 cards parsed as valid XML; `AI &amp; Systems &lt;3` escaping; duplicate username rejected; stats returns `repos=44`.
+- Cloud Run logs: `MongoDB cache connected.` → `Cache MISS` → `Cache updated` → `Cache HIT`.
+- Both service URLs verified (`71957385499.asia-south1.run.app` and `dttkjkvgua-el.a.run.app`).
+
+#### Not deployed
+
+- Frontend (editor fixes) — Firebase CLI is not installed; the cards themselves are backend-rendered and live.
 
 ## Decisions log (append-only)
 
@@ -66,9 +75,11 @@ Single source of truth for project status, decisions, and next steps. Read this 
 ## Known residuals / next
 
 - [x] Add `MONGODB_URI` to `backend/.env` locally — done; live round-trip passed.
-- [ ] Add `MONGODB_URI` (+ `MONGODB_DB`) to the **Cloud Run** env before deploying.
-- [ ] **Deploy + verify a real card** (miss → fetch → upsert → hit) on the deployed service.
-- [ ] **Commit all changes together** (requested by owner).
-- [ ] `heart_*_animation` tokens are inserted as raw SVG by design; arbitrary query-param values could inject markup. Consider whitelisting known animation values.
+- [x] Add `MONGODB_URI` / `MONGODB_DB` to Cloud Run and remove the Supabase vars — done on revision `00005-tnh`.
+- [x] **Deploy + verify a real card** — live MISS (3122ms) → HIT (90ms), Mongo logs confirmed.
+- [x] **Commit all changes together** — commit `461225e`.
+- [ ] Push commit `461225e` to `origin/main` (not pushed yet; deploy is live regardless).
+- [ ] Redeploy the frontend (editor bug fixes) once the Firebase CLI is available.
+- [x] `heart_*_animation` values are whitelisted (Pulse/Blink/Fade); unknown markup falls back to the default.
 - [ ] Stars/forks/languages use only the first 100 owned repos (`repositories(first: 100)`, scoped in `Plan.md`). Paginate if accuracy for large accounts matters.
-- [ ] `improvement.md` is truncated/incomplete (ends mid-code block).
+- [ ] `improvement.md` is truncated/incomplete (ends mid-code block). Not committed.
