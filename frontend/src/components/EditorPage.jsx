@@ -34,6 +34,7 @@ export default function EditorPage() {
 
   const [statsData, setStatsData] = useState(null);
   const [loadingStats, setLoadingStats] = useState(true);
+  const [statsError, setStatsError] = useState("");
   const [templates, setTemplates] = useState({});
   const [selectedCardId, setSelectedCardId] = useState(null);
   const [cardOverrides, setCardOverrides] = useState({});
@@ -46,7 +47,10 @@ export default function EditorPage() {
     let cancelled = false;
 
     fetch(`${API_BASE_URL}/api/stats/${username}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`Stats request failed (${res.status})`);
+        return res.json();
+      })
       .then((data) => {
         if (!cancelled) {
           setStatsData(data);
@@ -55,7 +59,10 @@ export default function EditorPage() {
       })
       .catch((err) => {
         console.error("Error fetching stats:", err);
-        if (!cancelled) setLoadingStats(false);
+        if (!cancelled) {
+          setStatsError("Could not load GitHub stats.");
+          setLoadingStats(false);
+        }
       });
 
     return () => {
@@ -88,26 +95,28 @@ export default function EditorPage() {
     return meta;
   }, [templates]);
 
-  // Initialize overrides with defaults
+  // Initialize overrides with defaults for every card as soon as metadata
+  // loads, so previews never show raw {{tokens}} before a card is selected.
   useEffect(() => {
-    if (!selectedCardId) return;
-    const meta = allMetadata[selectedCardId];
-    if (!meta?.controls) return;
+    if (!Object.keys(allMetadata).length) return;
 
     setCardOverrides((prev) => {
       const updated = { ...prev };
-      meta.controls.forEach((c) => {
-        if (
-          c.type !== "avatar" &&
-          !(c.key in updated) &&
-          c.default !== undefined
-        ) {
-          updated[c.key] = String(c.default);
-        }
+      Object.values(allMetadata).forEach((meta) => {
+        if (!meta?.controls) return;
+        meta.controls.forEach((c) => {
+          if (
+            c.type !== "avatar" &&
+            !(c.key in updated) &&
+            c.default !== undefined
+          ) {
+            updated[c.key] = String(c.default);
+          }
+        });
       });
       return updated;
     });
-  }, [selectedCardId, allMetadata]);
+  }, [allMetadata]);
 
   const handleAvatarUpload = async (e) => {
     const file = e.target.files[0];
@@ -171,7 +180,10 @@ export default function EditorPage() {
     if (meta?.controls) {
       meta.controls.forEach((control) => {
         const val = cardOverrides[control.key];
-        if (val) params.set(control.key, val);
+        // Include intentionally cleared (empty string) values too.
+        if (val !== undefined && val !== null) {
+          params.set(control.key, val);
+        }
       });
     }
 
@@ -228,6 +240,9 @@ export default function EditorPage() {
               <RefreshCw className="w-3.5 h-3.5 animate-spin" /> Fetching
               Stats...
             </div>
+          )}
+          {!loadingStats && statsError && (
+            <div className="text-xs text-error">{statsError}</div>
           )}
         </div>
 

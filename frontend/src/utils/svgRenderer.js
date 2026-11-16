@@ -1,13 +1,33 @@
 /**
+ * Escapes a value so it can be safely injected as SVG/XML text or attribute
+ * content. Prevents user text containing &, <, >, " or ' from breaking the
+ * SVG (e.g. a bio of "AI & Systems").
+ */
+export function escapeXml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+/**
  * Replaces all {{token}} placeholders in an SVG string.
  * Accepts a flat key-value map where keys match token names.
+ *
+ * Values are XML-escaped by default. Keys ending in `_animation` are the only
+ * exception: they carry raw SVG markup (e.g. <animate />) from template
+ * metadata, so escaping them would render the markup as text.
  */
 export function replaceSvgTokens(svgTemplate, tokenMap) {
   if (!svgTemplate || !tokenMap) return svgTemplate;
 
   let rendered = svgTemplate;
   for (const [key, value] of Object.entries(tokenMap)) {
-    rendered = rendered.replaceAll(`{{${key}}}`, String(value));
+    const safeValue = /_animation$/.test(key) ? String(value) : escapeXml(value);
+    // Function replacement keeps `$&`, `$'`, `$$` in user text literal.
+    rendered = rendered.replaceAll(`{{${key}}}`, () => safeValue);
   }
   return rendered;
 }
@@ -16,22 +36,24 @@ export function replaceSvgTokens(svgTemplate, tokenMap) {
  * Builds a flat token map from GitHub stats data (for Cards 2, 3, 4).
  */
 export function buildStatsTokenMap(data) {
-  if (!data) return {};
+  // Always return a complete map, even when stats are missing, so the SVG
+  // never renders literal {{token}} placeholders while loading or on error.
+  const safe = data || {};
 
   const map = {
     // Card 2
-    repos: String(data.repos ?? 0),
-    stars: String(data.stars ?? 0),
-    forks: String(data.forks ?? 0),
-    followers: String(data.followers ?? 0),
-    following: String(data.following ?? 0),
+    repos: String(safe.repos ?? 0),
+    stars: String(safe.stars ?? 0),
+    forks: String(safe.forks ?? 0),
+    followers: String(safe.followers ?? 0),
+    following: String(safe.following ?? 0),
     // Card 3
-    commits: String(data.commits ?? 0),
-    prs: String(data.prs ?? 0),
-    issues: String(data.issues ?? 0),
-    reviews: String(data.reviews ?? 0),
-    longest: String(data.longest_streak ?? 0),
-    current: String(data.current_streak ?? 0),
+    commits: String(safe.commits ?? 0),
+    prs: String(safe.prs ?? 0),
+    issues: String(safe.issues ?? 0),
+    reviews: String(safe.reviews ?? 0),
+    longest: String(safe.longest_streak ?? 0),
+    current: String(safe.current_streak ?? 0),
   };
 
   // Card 4 — Languages defaults
@@ -42,8 +64,8 @@ export function buildStatsTokenMap(data) {
     map[`lang_${i}_dashoffset`] = "440";
   }
 
-  if (data.languages && Array.isArray(data.languages)) {
-    data.languages.forEach((lang, index) => {
+  if (Array.isArray(safe.languages)) {
+    safe.languages.forEach((lang, index) => {
       const n = index + 1;
       if (n <= 5) {
         map[`lang_${n}_name`] = lang.name;

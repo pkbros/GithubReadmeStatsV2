@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { fetchGithubStats } = require("../services/github");
-const { renderCard } = require("../services/renderer");
+const { renderCard, escapeXml } = require("../services/renderer");
 const {
   getCachedStats,
   getStaleCachedStats,
@@ -16,7 +16,7 @@ function renderErrorSvg(message) {
         </style>
         <rect x="1" y="1" width="758" height="188" rx="6" fill="#0a0a0f" stroke="#ff2d55" stroke-width="1.5"/>
         <text x="50%" y="45%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#ff2d55" font-size="16" font-weight="bold">CARD RENDER ERROR</text>
-        <text x="50%" y="65%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#e0e0e0" font-size="12">${message.toUpperCase()}</text>
+        <text x="50%" y="65%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#e0e0e0" font-size="12">${escapeXml(String(message).toUpperCase())}</text>
       </svg>`;
 }
 
@@ -28,7 +28,7 @@ function renderRateLimitSvg(username) {
         </style>
         <rect x="1" y="1" width="758" height="188" rx="8" fill="#0a0a0f" stroke="#ff9500" stroke-width="1.5"/>
         <text x="50%" y="36%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#ff9500" font-size="15" font-weight="bold">⏳ GITHUB API RATE LIMIT COOLING DOWN</text>
-        <text x="50%" y="56%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#e0e0e0" font-size="12">Live stats for @${username} are temporarily paused</text>
+        <text x="50%" y="56%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#e0e0e0" font-size="12">Live stats for @${escapeXml(username)} are temporarily paused</text>
         <text x="50%" y="74%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#777777" font-size="10">GitHub API quota exceeded. Card will auto-update shortly.</text>
       </svg>`;
 }
@@ -41,7 +41,7 @@ function renderNetworkTimeoutSvg(username) {
         </style>
         <rect x="1" y="1" width="758" height="188" rx="8" fill="#0a0a0f" stroke="#00f0ff" stroke-width="1.5"/>
         <text x="50%" y="36%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#00f0ff" font-size="15" font-weight="bold">⚡ GITHUB CONNECTION TIMEOUT</text>
-        <text x="50%" y="56%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#e0e0e0" font-size="12">Unable to reach GitHub servers for @${username}</text>
+        <text x="50%" y="56%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#e0e0e0" font-size="12">Unable to reach GitHub servers for @${escapeXml(username)}</text>
         <text x="50%" y="74%" class="txt" dominant-baseline="middle" text-anchor="middle" fill="#777777" font-size="10">Retrying connection in background. Please refresh in a moment.</text>
       </svg>`;
 }
@@ -63,8 +63,14 @@ router.get("/:cardId", async (req, res) => {
     return res.send(renderErrorSvg("Username query parameter is required."));
   }
 
+  // Duplicate query params (?username=a&username=b) arrive as an array.
+  if (typeof username !== "string") {
+    res.setHeader("Content-Type", "image/svg+xml");
+    return res.send(renderErrorSvg("Username must be a single value."));
+  }
+
   try {
-    // 1. Try to read from Supabase cache
+    // 1. Try to read from MongoDB cache
     let statsData = await getCachedStats(username);
 
     // 2. If cache miss, fetch live from GitHub and cache the result

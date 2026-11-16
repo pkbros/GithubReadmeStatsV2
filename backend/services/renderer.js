@@ -34,18 +34,84 @@ function loadTemplates() {
 
 loadTemplates();
 
+/**
+ * Escapes a value so it can be safely injected as SVG/XML text or attribute
+ * content. Without this, user-controlled values containing &, <, >, " or '
+ * (e.g. a GitHub bio of "AI & Systems") produce invalid XML and the card
+ * fails to render. Raw SVG tokens such as animations are intentionally NOT
+ * passed through this helper.
+ */
+function escapeXml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+/**
+ * Returns an override when the query parameter is present (even if it is an
+ * empty string) and the fallback otherwise. This lets a user intentionally
+ * clear a field instead of silently getting the default back.
+ */
+function pick(overrides, key, fallback) {
+  return overrides[key] !== undefined ? overrides[key] : fallback;
+}
+
+// Defaults used when no animation is supplied via query params. Heart 2 keeps
+// its historical blink so existing embeds render exactly as before.
+const HEART_ANIMATION_DEFAULTS = {
+  1: "",
+  2: '<animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>',
+  3: "",
+};
+
+// `heart_*_animation` values are injected as raw SVG, so only the animations the
+// editor actually offers are accepted. Anything else is dropped instead of
+// allowing arbitrary markup (e.g. <script>) from a query parameter.
+const ALLOWED_HEART_ANIMATIONS = new Set(
+  [
+    "",
+    "<animateTransform attributeName='transform' type='scale' values='1;1.08;1' dur='1.2s' repeatCount='indefinite'/>",
+    "<animate attributeName='opacity' values='1;0;1' dur='1s' repeatCount='indefinite'/>",
+    "<animate attributeName='opacity' values='1;0.3;1' dur='2s' repeatCount='indefinite'/>",
+    ...Object.values(HEART_ANIMATION_DEFAULTS),
+  ].map(canonicalizeAnimation),
+);
+
+function canonicalizeAnimation(value) {
+  return String(value ?? "")
+    .trim()
+    .replace(/"/g, "'")
+    .replace(/\s+/g, " ")
+    .replace(/\s*\/>$/, "/>");
+}
+
+function sanitizeHeartAnimation(value, fallback = "") {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "";
+  if (ALLOWED_HEART_ANIMATIONS.has(canonicalizeAnimation(raw))) return raw;
+  // Unknown/unsafe value: fall back to the default animation for this heart.
+  const safeFallback = String(fallback ?? "").trim();
+  return ALLOWED_HEART_ANIMATIONS.has(canonicalizeAnimation(safeFallback))
+    ? safeFallback
+    : "";
+}
+
 function buildTokenMap(data, overrides = {}) {
+  const esc = escapeXml;
   const map = {
     // Card 1 — Identity
-    name: overrides.name || data.name || data.username || "",
-    username: data.username || "",
-    bio: overrides.bio || data.bio || "",
-    field_1: overrides.field_1 || "EMAIL",
-    value_1: overrides.value_1 || "",
-    field_2: overrides.field_2 || "LINKEDIN",
-    value_2: overrides.value_2 || "",
-    field_3: overrides.field_3 || "STATUS",
-    value_3: overrides.value_3 || "",
+    name: esc(pick(overrides, "name", data.name || data.username || "")),
+    username: esc(data.username || ""),
+    bio: esc(pick(overrides, "bio", data.bio || "")),
+    field_1: esc(pick(overrides, "field_1", "EMAIL")),
+    value_1: esc(pick(overrides, "value_1", "")),
+    field_2: esc(pick(overrides, "field_2", "LINKEDIN")),
+    value_2: esc(pick(overrides, "value_2", "")),
+    field_3: esc(pick(overrides, "field_3", "STATUS")),
+    value_3: esc(pick(overrides, "value_3", "")),
 
     // Card 2 — Stats
     repos: String(data.repos || 0),
@@ -63,13 +129,27 @@ function buildTokenMap(data, overrides = {}) {
     current: String(data.current_streak || 0),
 
     // Card 5 — Footer
-    quote_1_text:
-      overrides.quote_1_text ||
-      "Code is like humor. When you have to explain it, its bad.",
-    quote_2_text:
-      overrides.quote_2_text || "Simplicity is prerequisite for reliability.",
-    quote_3_text:
-      overrides.quote_3_text || "Make it work, make it right, make it fast.",
+    quote_1_text: esc(
+      pick(
+        overrides,
+        "quote_1_text",
+        "Code is like humor. When you have to explain it, its bad.",
+      ),
+    ),
+    quote_2_text: esc(
+      pick(
+        overrides,
+        "quote_2_text",
+        "Simplicity is prerequisite for reliability.",
+      ),
+    ),
+    quote_3_text: esc(
+      pick(
+        overrides,
+        "quote_3_text",
+        "Make it work, make it right, make it fast.",
+      ),
+    ),
   };
 
   // Card 4 — Languages
@@ -84,9 +164,9 @@ function buildTokenMap(data, overrides = {}) {
     data.languages.forEach((lang, index) => {
       const n = index + 1;
       if (n <= 5) {
-        map[`lang_${n}_name`] = lang.name;
+        map[`lang_${n}_name`] = esc(lang.name);
         map[`lang_${n}_pct`] = lang.pct.toFixed(1);
-        map[`lang_${n}_color`] = lang.color;
+        map[`lang_${n}_color`] = esc(lang.color);
         map[`lang_${n}_dashoffset`] = String(
           440 - Math.round((lang.pct / 100) * 440),
         );
@@ -95,9 +175,14 @@ function buildTokenMap(data, overrides = {}) {
   }
 
   // Card 5 — Hearts
+  // `heart_*_animation` is intentionally left unescaped: it carries raw SVG
+  // markup (e.g. <animate />) supplied by the template metadata, not text.
   for (let h = 1; h <= 3; h++) {
-    map[`heart_${h}_fill`] = overrides[`heart_${h}_fill`] || "#1a1a2e";
-    map[`heart_${h}_animation`] = overrides[`heart_${h}_animation`] || "";
+    map[`heart_${h}_fill`] = esc(overrides[`heart_${h}_fill`] || "#1a1a2e");
+    map[`heart_${h}_animation`] = sanitizeHeartAnimation(
+      pick(overrides, `heart_${h}_animation`, HEART_ANIMATION_DEFAULTS[h]),
+      HEART_ANIMATION_DEFAULTS[h],
+    );
   }
 
   return map;
@@ -113,7 +198,9 @@ function renderCard(cardId, data, overrides = {}) {
   let renderedSvg = template;
 
   for (const [key, value] of Object.entries(tokenMap)) {
-    renderedSvg = renderedSvg.replaceAll(`{{${key}}}`, value);
+    // Use a function replacement so `$&`, `$'`, `$$` etc. inside user text are
+    // inserted literally instead of being interpreted as replacement patterns.
+    renderedSvg = renderedSvg.replaceAll(`{{${key}}}`, () => value);
   }
 
   // Card 1 Avatar: Since we download locally on the frontend,
@@ -137,5 +224,6 @@ function renderCard(cardId, data, overrides = {}) {
 module.exports = {
   renderCard,
   buildTokenMap,
+  escapeXml,
   reloadTemplates: loadTemplates,
 };

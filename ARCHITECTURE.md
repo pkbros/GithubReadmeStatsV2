@@ -15,7 +15,7 @@ graph TD
     User([GitHub Profile Viewer]) -->|HTTP GET /api/card/*| CDN[GCP Cloud Run CDN]
     CDN --> API[Backend API Node.js/Express]
     
-    API -->|1. Check Cache| DB[(Supabase PostgreSQL)]
+    API -->|1. Check Cache| DB[(MongoDB)]
     DB -.->|Cache Hit| API
     
     API -->|2. Fetch GraphQL| GITHUB[GitHub API]
@@ -41,7 +41,7 @@ The backend is a stateless Express.js application designed to quickly serve dyna
 **Key Modules:**
 *   **Routing (`routes/card.js`, `routes/stats.js`)**: Maps URLs like `/api/card/2?username=octocat` to specific card templates and data requirements.
 *   **GitHub Service (`services/github.js`)**: Executes precise GraphQL queries to fetch only the necessary data (stars, commits, languages) to minimize payload size and API cost.
-*   **Cache Layer (`services/cache.js`)**: Interfaces with Supabase. It implements a stale-while-revalidate pattern or standard TTL (Time To Live) to ensure GitHub API rate limits (5,000 req/hr) are never breached.
+*   **Cache Layer (`services/cache.js`)**: Interfaces with MongoDB. It implements a stale-while-revalidate pattern or standard TTL (Time To Live) to ensure GitHub API rate limits (5,000 req/hr) are never breached.
 *   **Renderer (`services/renderer.js`)**: Parses raw SVG templates from the `templates/` directory and injects dynamic data, colors, and text into the XML structure before sending the final `image/svg+xml` response.
 
 ### 2.2 Frontend (Live Customizer)
@@ -62,7 +62,7 @@ The most critical flow in the application is the SVG rendering sequence. To main
 sequenceDiagram
     participant Camo as GitHub Proxy (Camo)
     participant API as Backend API
-    participant DB as Supabase (Cache)
+    participant DB as MongoDB (Cache)
     participant GH as GitHub API
     
     Camo->>API: GET /api/card/2?username=octocat
@@ -100,7 +100,7 @@ sequenceDiagram
 | **Backend Framework** | Node.js + Express 5 | Lightweight, highly performant for async I/O, perfect for proxying API requests and serving SVGs. |
 | **Frontend Framework** | React 19 + Vite | Vite provides instant HMR. React 19 handles complex state management in the visual editor efficiently. |
 | **Styling** | Tailwind CSS 4 + DaisyUI | Utility-first CSS allows rapid prototyping of the dashboard. DaisyUI provides pre-built, accessible components. |
-| **Database/Cache** | Supabase (PostgreSQL) | Fully managed Postgres with a RESTful interface. Serves as a persistent cache to bypass GitHub API limits. |
+| **Database/Cache** | MongoDB | Document store with a simple driver API. Serves as a persistent cache to bypass GitHub API limits. |
 | **Deployment (API)** | GCP Cloud Run | Serverless container execution. Scales automatically to 0 when idle, handles massive traffic spikes gracefully. |
 | **Deployment (Web)** | Firebase Hosting | Global CDN caching for static assets, providing sub-second load times for the SPA. |
 
@@ -110,4 +110,4 @@ sequenceDiagram
 
 *   **Token Protection**: The GitHub Personal Access Token (PAT) is strictly stored as a server-side environment variable and is never exposed to the frontend.
 *   **CORS Configuration**: The backend restricts API access appropriately, ensuring that only allowed origins (or GitHub's camo proxy) can render cards if required.
-*   **Rate Limits**: The 4-hour cache TTL ensures that even if a single user's `README.md` is viewed 10,000 times a day, only 6 requests reach the GitHub API.
+*   **Rate Limits**: The 6-hour cache TTL (configurable via `CACHE_TTL_HOURS`) ensures that even if a single user's `README.md` is viewed 10,000 times a day, only 4 requests reach the GitHub API.

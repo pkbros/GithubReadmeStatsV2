@@ -18,7 +18,7 @@
       } -->
   <!--
     CARD 1 — IDENTITY | Neon Theme (cyan #00e5ff)
-    Same tokens as RPG theme: {{name}}, {{username}}, {{bio}}, {{location}}, {{company}}, {{created_at}}
+    Supported tokens: name, username, bio, field_1..field_3, value_1..value_3, avatar
   -->
   <style>
     .marquee { font-family: 'Courier New', Courier, monospace; font-weight: bold; letter-spacing: 4px; text-transform: uppercase; }
@@ -40,6 +40,9 @@
     </pattern>
     <clipPath id="mClip">
       <rect x="6" y="3" width="748" height="20"/>
+    </clipPath>
+    <clipPath id="avatarClip">
+      <rect x="24" y="34" width="140" height="140" rx="3"/>
     </clipPath>
   </defs>
 

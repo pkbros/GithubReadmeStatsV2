@@ -18,9 +18,9 @@
 
       Frame tokens: outer_h=card_height-2, inner_h=card_height-10
 
-    Per-row tokens:
-      {{lang_N_name}}, {{lang_N_pct}}, {{lang_N_color}},
-      {{lang_N_dashoffset}} = 440 - (pct/100 × 440)
+    Per-row tokens (N = 1..5):
+      lang_N_name, lang_N_pct, lang_N_color,
+      lang_N_dashoffset = 440 - (pct/100 × 440)
 
     Bars are stroked lines (stroke-dasharray=440, animate stroke-dashoffset).
   -->

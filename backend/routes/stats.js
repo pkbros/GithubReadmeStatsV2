@@ -12,7 +12,7 @@ router.get("/:username", async (req, res) => {
   }
 
   try {
-    // 1. Try to read from Supabase cache
+    // 1. Try to read from MongoDB cache
     let statsData = await getCachedStats(username);
 
     // 2. If cache miss, fetch live from GitHub and cache the result

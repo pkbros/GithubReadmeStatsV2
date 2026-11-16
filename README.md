@@ -6,10 +6,10 @@
 [![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
 [![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-A backend API and React dashboard for generating neon-themed GitHub profile stats cards. Cards are rendered directly as SVG vector images and cached using Supabase to stay within GitHub API rate limits.
+A backend API and React dashboard for generating neon-themed GitHub profile stats cards. Cards are rendered directly as SVG vector images and cached using MongoDB to stay within GitHub API rate limits.
 
 Customize and preview your cards live on the dashboard: [https://github-readme-stats-v2.web.app](https://github-readme-stats-v2.web.app)
 
@@ -52,15 +52,15 @@ Add dynamic cards directly to your GitHub profile `README.md` by pasting the HTM
 ## How It Works
 
 1. **Request**: GitHub's image proxy (Camo) or a browser requests `/api/card/:cardId?username=yourname`.
-2. **Cache Check**: The backend checks Supabase PostgreSQL for cached stats (4-hour default TTL).
-3. **API Fetch**: On a cache miss, stats are fetched from GitHub's GraphQL API, stored in Supabase, and rendered into SVG card templates.
+2. **Cache Check**: The backend checks MongoDB for cached stats (6-hour default TTL, configurable).
+3. **API Fetch**: On a cache miss, stats are fetched from GitHub's GraphQL API, stored in MongoDB, and rendered into SVG card templates.
 4. **Rate Limit Fallback**: If GitHub's API rate limit is reached, the backend serves the last cached snapshot from the database (or a cooldown SVG card for new users).
 
 ---
 
 ## Tech Stack
 
-- **Backend**: Node.js, Express, Axios, Supabase (PostgreSQL)
+- **Backend**: Node.js, Express, Axios, MongoDB
 - **Frontend**: React 19, Vite, Tailwind CSS 4, DaisyUI 5, Lucide Icons
 - **Deployment**: GCP Cloud Run (Backend API), Firebase Hosting (Frontend SPA)
 
@@ -71,7 +71,7 @@ Add dynamic cards directly to your GitHub profile `README.md` by pasting the HTM
 ### Prerequisites
 - Node.js (v18+)
 - GitHub Personal Access Token (PAT) with `read:user` permissions
-- Supabase Project (URL and Service Role Key)
+- MongoDB database (local or Atlas connection URI)
 
 ### 1. Backend Setup
 
@@ -85,9 +85,9 @@ Configure your environment variables in `backend/.env`:
 ```ini
 PORT=3001
 GITHUB_PAT=your_github_personal_access_token
-SUPABASE_URL=https://your-project-id.supabase.co
-SUPABASE_KEY=your_supabase_service_role_key
-CACHE_TTL_HOURS=4
+MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/?retryWrites=true&w=majority
+MONGODB_DB=github_readme_stats
+CACHE_TTL_HOURS=6
 ```
 
 Start the backend development server:

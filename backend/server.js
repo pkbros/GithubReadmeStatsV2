@@ -5,6 +5,7 @@ const cors = require("cors");
 // Import routes
 const statsRouter = require("./routes/stats");
 const cardRouter = require("./routes/card");
+const { closeCache } = require("./services/cache");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -26,3 +27,16 @@ app.get("/health", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+// Graceful shutdown (Cloud Run sends SIGTERM before stopping the instance).
+async function shutdown(signal) {
+  console.log(`${signal} received. Closing cache connection...`);
+  try {
+    await closeCache();
+  } finally {
+    process.exit(0);
+  }
+}
+
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));

@@ -14,8 +14,8 @@ const STATS_QUERY = `
         createdAt
         followers { totalCount }
         following { totalCount }
-        pullRequests { totalCount }
-        issues { totalCount }
+        pullRequests(states: [MERGED]) { totalCount }
+        issues(states: [CLOSED]) { totalCount }
         repositories(first: 100, ownerAffiliations: [OWNER], orderBy: {field: STARGAZERS, direction: DESC}) {
           totalCount
           nodes {

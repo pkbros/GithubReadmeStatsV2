@@ -19,7 +19,7 @@ cd GithubReadmeStatsV2
 cd backend
 npm install
 cp .env.example .env
-# Configure your variables in .env (e.g. GITHUB_PAT, SUPABASE details)
+# Configure your variables in .env (e.g. GITHUB_PAT, MONGODB_URI)
 npm run dev
 ```
 
