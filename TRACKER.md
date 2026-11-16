@@ -78,8 +78,8 @@ Single source of truth for project status, decisions, and next steps. Read this 
 - [x] Add `MONGODB_URI` / `MONGODB_DB` to Cloud Run and remove the Supabase vars — done on revision `00005-tnh`.
 - [x] **Deploy + verify a real card** — live MISS (3122ms) → HIT (90ms), Mongo logs confirmed.
 - [x] **Commit all changes together** — commit `461225e`.
-- [ ] Push commit `461225e` to `origin/main` (not pushed yet; deploy is live regardless).
-- [ ] Redeploy the frontend (editor bug fixes) once the Firebase CLI is available.
+- [x] Push commits to `origin/main` — done (`8b9c10d`).
+- [x] Redeploy the frontend (editor bug fixes) — deployed to `github-readme-stats-v2.web.app`; bundle `index-DJtzL76g.js` verified live.
 - [x] `heart_*_animation` values are whitelisted (Pulse/Blink/Fade); unknown markup falls back to the default.
 - [ ] Stars/forks/languages use only the first 100 owned repos (`repositories(first: 100)`, scoped in `Plan.md`). Paginate if accuracy for large accounts matters.
 - [ ] `improvement.md` is truncated/incomplete (ends mid-code block). Not committed.
